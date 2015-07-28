@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gdutWishWall">
+<head>
+	<meta charset="UTF-8">
+	<title>许愿墙</title>
+	<meta name="viewport" content="initial-scale=1" />
+    	<meta http-equiv="Cache-Control" content="no-transform " />
+    	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="stylesheet" href="/public/stylesheets/bootstrap.min.css">
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation" ng-controller="UserCtrl">
+	     	<div class="navbar-header">
+		        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+		           data-target="#example-navbar-collapse">
+		           	<span class="sr-only">切换导航</span>
+		           	<span class="icon-bar"></span>
+		           	<span class="icon-bar"></span>
+		           	<span class="icon-bar"></span>
+		        </button>
+	        	<a class="navbar-brand" ui-sref="index">许愿墙{{username}}</a>
+	     	</div>
+	     	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		        <ul class="nav navbar-nav">
+		           	<li class="active"><a ui-sref="index">首页</a></li>
+		           	<li ng-hide="isLogined"><a ui-sref="user.login">登录</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.info">个人中心</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.wish">我的愿望</a></li>
+		           	<li ng-show="isFemale"><a ui-sref="user.putwish">许愿</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.logout" ng-click='doLogout()'>注销</a></li>
+		        </ul>
+	     	</div>
+	</nav>
+
+	<div ui-view>
+		
+	</div>
+
+	<script src="/public/scripts/jquery.min.js"></script>
+	<script src="/public/scripts/bootstrap.min.js"></script>
+	<script src="/public/scripts/angular/angular.min.js"></script>
+	<script src="/public/scripts/angular/angular-ui-router.min.js"></script>
+	<script src="/public/scripts/app.js"></script>
+	<script src="/services/index.js"></script>
+	<script src="/controllers/IndexCtrl.js"></script>
+	<script src="/controllers/UserCtrl.js"></script>
+</body>
+</html>

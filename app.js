@@ -5,27 +5,84 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// var flash = require('express-flash');
+// var bcrypt = require('bcrypt');
 
 var routes = require('./routes');
-var users = require('./routes/user');
 
 var app = express();
 
+var server = http.createServer(app);
+
+//引用 passport
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'ejs');
+
+//引用数据模板
+var User = require('./models/user.js');
+var Wish = require('./models/wish.js');
 
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+//使用 session
+app.use(express.session({secret: 'gdutwishwall', cookie: { maxAge: 6000000 }}));
+//初始化 passport
+app.use(passport.initialize());
+app.use(passport.session());
+// app.use(flash());
+
+app.use(express.static(path.join(__dirname, 'app')));
 app.use(app.router);
 
-app.get('/', routes.index);
-app.get('/users', users.list);
+//默认访问 index.html
+app.get('/', function(req, res){
+    res.sendfile('./app/views/index.html');
+});
 
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+passport.use('local', new LocalStrategy(
+    function (username, password, done) {
+        User.findOne({username: username}, function(err,user){
+            if (err) { return done(err); }
+            if (!user) {
+                return done(null, false, { message: 'Incorrect username.' });
+              }
+            // if (user.password !== password) {
+            //     return done(null, false, { message: 'Incorrect password.' });
+            // }
+            return done(null, user);
+                
+        });
+    }
+));
+
+//处理登录请求
+app.post('/login', passport.authenticate('local'), function(req, res){
+    res.send({user: req.user});
+});
+
+//处理注销登录的请求
+app.post('/logout', function(req, res) {
+    req.logout();
+    res.end();
+});
+
+//获取所有未领取愿望
+app.get('/getUnpickedWish', function(req, res) {
+    Wish.find({"ispicked": 0}).sort({"_id": -1}).exec(function(err, wishes) {
+        res.send({wishes: wishes});
+    });
+});
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -55,5 +112,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-
+server.listen(18080,function () {
+    console.log('everything is ok');
+});
 module.exports = app;

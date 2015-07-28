@@ -1,4 +1,12 @@
-/* GET home page. */
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
-};
+/***********************服务器路由规则*******************************/
+
+//获取用户模板
+var User = require('../models/user.js');
+
+//获取 passport 
+
+
+
+
+
+// 登录动作
