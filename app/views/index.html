@@ -24,9 +24,10 @@
 		        <ul class="nav navbar-nav">
 		           	<li class="active"><a ui-sref="index">首页</a></li>
 		           	<li ng-hide="isLogined"><a ui-sref="user.login">登录</a></li>
-		           	<li ng-show="isLogined"><a ui-sref="user.info">个人中心</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.info({userId: userId})">个人中心</a></li>
 		           	<li ng-show="sex == 'female'"><a ui-sref="user.femalewish">我许下的愿望</a></li>
 		           	<li ng-show="sex == 'male'"><a ui-sref="user.malewish">我领取的愿望</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.putwish">消息中心</a></li>
 		           	<li ng-show="sex == 'female'"><a ui-sref="user.putwish">许愿</a></li>
 		           	<li ng-show="isLogined"><a ui-sref="user.logout" ng-click='doLogout()'>注销</a></li>
 		        </ul>

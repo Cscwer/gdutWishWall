@@ -1,7 +1,7 @@
 <div class="container-fluid">
 	<div class="row-fluid" ng-repeat="wish in wishes">
 		<div class="hero-unit">
-			<h1>
+			<h1 ui-sref="user.info({userId: wish.user})">
 				{{wish.username}}
 			</h1>
 			<p>

@@ -5,6 +5,7 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService', f
 		if(sessionStorage.getItem('uid')) {
 			$scope.isLogined = true;
 			$scope.username = sessionStorage.getItem('username');
+			$scope.userId = sessionStorage.getItem('uid');
 			$scope.email = sessionStorage.getItem('email');
 			if(sessionStorage.getItem('sex') == 'male') {
 				$scope.sex = 'male';
@@ -15,6 +16,7 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService', f
 		} else {
 			$scope.isLogined = false;
 			$scope.username = '';
+			$scope.userId = '';
 			$scope.email = '';
 			$scope.sex = '';
 		}
@@ -39,6 +41,25 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService', f
             updateLoginState();
         })
 	
+}]);
+
+//用户信息控制器
+app.controller('UserInfoCtrl', ['$scope', '$state', '$stateParams', 'GetUserInfoService', function($scope, $state, $stateParams, GetUserInfoService) {
+	if(sessionStorage.getItem('uid')) {
+		var data = {
+			userId: $stateParams.userId
+		};
+		GetUserInfoService.getUserInfo(data)
+			.success(function (data, status) {
+				if(status === 200) {
+					$scope.username = data.user.username;
+					$scope.email = data.user.email;
+					$scope.sex = data.user.sex;
+				}
+			});
+	} else {
+		$state.go('user.login');
+	}
 }]);
 
 //登录控制器
@@ -81,6 +102,7 @@ app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', function($sc
 			var data = {
 				user: sessionStorage.getItem('uid'),
 				username: sessionStorage.getItem('username'),
+				wishType: $scope.wish_type,
 				wish: $scope.wish
 			};
 			console.log(data);

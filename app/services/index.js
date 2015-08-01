@@ -26,6 +26,18 @@ app.factory('LogoutService', ['$http', function($http) {
 	};
 }]);
 
+//获取指定用户的信息
+app.factory('GetUserInfoService', ['$http', function($http) {
+	return {
+		getUserInfo: function(data) {
+			return $http({
+				method: 'GET',
+				url: '/getUserInfo?userId='+data.userId
+			});
+		}
+	};
+}]);
+
 //获取所有未领取愿望
 app.factory('GetUnpickedWish', ['$http', function($http) {
 	return {
@@ -57,7 +69,7 @@ app.factory('FindWishService', ['$http', function($http) {
 		findWish: function(data) {
 			return $http({
 				method: 'GET',
-				url: '/getwish?wishId='+data.wishId,
+				url: '/getwish?wishId='+data.wishId
 			});
 		}
 	}
@@ -81,8 +93,8 @@ app.factory('GetFemaleWishService', ['$http', function($http) {
 	return {
 		getWish: function(data) {
 			return $http({
-				method: 'POST',
-				url: '/getfemalewish',
+				method: 'GET',
+				url: '/getfemalewish?userId='+data.userId,
 				data: data
 			});
 		}

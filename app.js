@@ -77,6 +77,13 @@ app.post('/logout', function(req, res) {
     res.end();
 });
 
+//获取指定用户信息
+app.get('/getUserInfo', function(req, res) {
+    User.findOne({_id: req.query.userId}).exec(function(err, user) {
+        res.send({user: user});
+    });
+});
+
 //获取所有未领取愿望
 app.get('/getUnpickedWish', function(req, res) {
     Wish.find({"ispicked": 0}).sort({"_id": -1}).exec(function(err, wishes) {
@@ -86,9 +93,8 @@ app.get('/getUnpickedWish', function(req, res) {
 
 //处理许愿请求
 app.post('/putwish', function(req, res) {
-    var newWish = new Wish({user: req.body.user, username: req.body.username, wish: req.body.wish});
+    var newWish = new Wish({user: req.body.user, username: req.body.username, wishType: req.body.wishType, wish: req.body.wish});
     newWish.save(function(err) {
-        // console.log(err);
         res.end();
     });
 });
@@ -108,8 +114,8 @@ app.post('/pickwish', function(req, res) {
 });
 
 //女生获取自己的愿望
-app.post('/getfemalewish', function(req, res) {
-    Wish.find({user: req.body.user}).exec(function(err, wishes) {
+app.get('/getfemalewish', function(req, res) {
+    Wish.find({user: req.query.userId}).exec(function(err, wishes) {
         res.send({wishes: wishes});
     });
 });

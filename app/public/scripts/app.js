@@ -30,9 +30,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
 			url: '/logout'
 		})
 		.state('user.info', {
-			url: '/info',
+			url: '/info/:userId',
 			templateUrl: '/views/User/userinfo.html',
-			controller: 'UserCtrl'
+			controller: 'UserInfoCtrl'
+			// controller: 'UserInfoCtrl'
 		})
 		.state('user.putwish', {
 			url: '/putwish',

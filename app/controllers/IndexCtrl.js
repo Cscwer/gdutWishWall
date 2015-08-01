@@ -4,6 +4,5 @@ app.controller('IndexCtrl', ['$scope', 'GetUnpickedWish', function($scope, GetUn
 	GetUnpickedWish.getWishes()
 		.success(function(data) {
 			$scope.wishes = data.wishes;
-			console.log(data.wishes);
 		});
 }]);

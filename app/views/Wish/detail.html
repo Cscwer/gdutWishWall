@@ -11,6 +11,11 @@
 	         <td>{{wish.publishDate}}</td>
 	      </tr>
 	      <tr>
+	         <td>愿望类型</td>
+	         <td ng-show="wish.wishType === 1">耗时类</td>
+	         <td ng-show="wish.wishType === 2">实物类</td>
+	      </tr>
+	      <tr>
 	         <td>愿望内容</td>
 	         <td>{{wish.wish}}</td>
 	      </tr>

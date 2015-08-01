@@ -5,8 +5,9 @@
 		         已被领取的愿望
 		      	 </h3>
 		 </div>
-	   	 <div class="panel-body" ng-repeat="wish in PickedWishes">
-	      		<div class="hero-unit">
+	   	 <div class="panel-body">
+	   	 	<p ng-show="PickedWishes.length === 0">暂时还没有被领取的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in PickedWishes">
 				<h1>
 					{{wish.username}}
 				</h1>
@@ -25,8 +26,9 @@
 		         	未被领取的愿望
 		        </h3>
 		 </div>
-		 <div class="panel-body" ng-repeat="wish in UnpickWishes">
-	      		<div class="hero-unit">
+		 <div class="panel-body">
+		 	<p ng-show="UnpickWishes.length === 0">暂时还没有未被领取的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in UnpickWishes">
 				<h1>
 					{{wish.username}}
 				</h1>
