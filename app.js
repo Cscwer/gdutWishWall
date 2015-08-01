@@ -18,7 +18,7 @@ var server = http.createServer(app);
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 // view engine setup
-app.set('views', path.join(__dirname, 'app/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 //引用数据模板
@@ -83,6 +83,43 @@ app.get('/getUnpickedWish', function(req, res) {
         res.send({wishes: wishes});
     });
 });
+
+//处理许愿请求
+app.post('/putwish', function(req, res) {
+    var newWish = new Wish({user: req.body.user, username: req.body.username, wish: req.body.wish});
+    newWish.save(function(err) {
+        // console.log(err);
+        res.end();
+    });
+});
+
+//获取指定愿望
+app.get('/getwish', function(req, res) {
+    Wish.findOne({"_id": req.query.wishId}).exec(function(err, wish) {
+        res.send({wish: wish});
+    });
+});
+
+//男生领取愿望
+app.post('/pickwish', function(req, res) {
+    Wish.update({_id: req.body.wish._id}, {$set: {ispicked: 1, wishpicker: req.body.wishPicker}}, function(err, docs) {
+        res.end();
+    });
+});
+
+//女生获取自己的愿望
+app.post('/getfemalewish', function(req, res) {
+    Wish.find({user: req.body.user}).exec(function(err, wishes) {
+        res.send({wishes: wishes});
+    });
+});
+
+//男生获取自己的愿望
+app.get('/getmalewish', function(req, res) {
+    Wish.find({wishpicker: req.query.pickerId}).exec(function(err, wishes) {
+        res.send({wishes: wishes});
+    });
+});
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -113,6 +150,6 @@ app.use(function(err, req, res, next) {
 });
 
 server.listen(18080,function () {
-    console.log('everything is ok');
+    console.log('The server is ready in http://localhost:18080');
 });
 module.exports = app;

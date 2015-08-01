@@ -2,6 +2,7 @@ var mongodb = require('./mongodb');
 var Schema = mongodb.mongoose.Schema;
 
 var WishSchema = new Schema({
+	user: String,
 	username: String,
 	wish: String,
 	publishDate: {type: Date, default: Date.now},

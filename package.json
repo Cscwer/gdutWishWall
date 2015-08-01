@@ -19,5 +19,12 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^1.0.1",
     "static-favicon": "~1.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-livereload": "^3.8.0",
+    "gulp-nodemon": "^2.0.3",
+    "gulp-uglify": "^1.2.0"
   }
 }

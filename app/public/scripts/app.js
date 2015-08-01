@@ -15,7 +15,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
 			abstract: true,
 			url: '/user',
 			templateUrl: '/views/User/index.html',
-			// controller: 'UserCtrl'
+		})
+		.state('wish', {
+			abstract: true,
+			url: '/wish',
+			templateUrl: '/views/Wish/index.html'
 		})
 		.state('user.login', {
 			url: '/login',
@@ -29,7 +33,33 @@ app.config(function($stateProvider, $urlRouterProvider) {
 			url: '/info',
 			templateUrl: '/views/User/userinfo.html',
 			controller: 'UserCtrl'
+		})
+		.state('user.putwish', {
+			url: '/putwish',
+			templateUrl: '/views/User/female/putwish.html',
+			controller: 'FemaleCtrl'
+		})
+		.state('user.femalewish', {
+			url: '/female/mywish',
+			templateUrl: '/views/User/female/mywish.html',
+			controller: 'FemaleWishCtrl'
+		})
+		.state('user.malewish', {
+			url: '/male/mywish/:pickerId',
+			templateUrl: '/views/User/male/mywish.html',
+			controller: 'MaleWishCtrl'
+		})
+		.state('wish.detail', {
+			url: '/detail/:wishId',
+			templateUrl: '/views/Wish/detail.html',
+			controller: 'WishCtrl'
 		});
 		
 });
+
+
+
+
+
+
 
