@@ -7,17 +7,29 @@
     	<meta http-equiv="Cache-Control" content="no-transform " />
     	<meta http-equiv="Cache-Control" content="no-siteapp" />
 	<link rel="stylesheet" href="/public/stylesheets/bootstrap.min.css">
+	<link rel="stylesheet" href="/public/stylesheets/main.css">
+	<script src="/public/scripts/jquery.min.js"></script>
+	<script src="/public/scripts/bootstrap.min.js"></script>
+	<script src="/public/scripts/angular/angular.min.js"></script>
+	<script src="/public/scripts/angular/angular-ui-router.min.js"></script>
+	<script src="/public/scripts/socket.io.js"></script>
+	<script src="/public/scripts/app.js"></script>
+	<script src="/services/index.js"></script>
+	<script src="/controllers/IndexCtrl.js"></script>
+	<script src="/controllers/UserCtrl.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default" role="navigation" ng-controller="UserCtrl">
 	     	<div class="navbar-header">
 		        <button type="button" class="navbar-toggle" data-toggle="collapse" 
 		           data-target="#example-navbar-collapse">
+		           	
 		           	<span class="sr-only">切换导航</span>
 		           	<span class="icon-bar"></span>
 		           	<span class="icon-bar"></span>
 		           	<span class="icon-bar"></span>
 		        </button>
+
 	        	<a class="navbar-brand" ui-sref="index">许愿墙{{username}}</a>
 	     	</div>
 	     	<div class="collapse navbar-collapse" id="example-navbar-collapse">
@@ -25,11 +37,12 @@
 		           	<li class="active"><a ui-sref="index">首页</a></li>
 		           	<li ng-hide="isLogined"><a ui-sref="user.login">登录</a></li>
 		           	<li ng-show="isLogined"><a ui-sref="user.info({userId: userId})">个人中心</a></li>
-		           	<li ng-show="sex == 'female'"><a ui-sref="user.femalewish">我许下的愿望</a></li>
-		           	<li ng-show="sex == 'male'"><a ui-sref="user.malewish">我领取的愿望</a></li>
-		           	<li ng-show="isLogined"><a ui-sref="user.putwish">消息中心</a></li>
+		           	<li ng-show="sex == 'female'"><a ui-sref="wish.femalewish">我许下的愿望</a></li>
+		           	<li ng-show="sex == 'male'"><a ui-sref="wish.malewish">我领取的愿望</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.message"  ng-click="cancelMsgCount()">消息中心 <span class="badge" ng-show="hasNewMsg"></span></a></li>
 		           	<li ng-show="sex == 'female'"><a ui-sref="user.putwish">许愿</a></li>
 		           	<li ng-show="isLogined"><a ui-sref="user.logout" ng-click='doLogout()'>注销</a></li>
+		           	<!-- <input type="checkbox" ng-model="checked"> -->
 		        </ul>
 	     	</div>
 	</nav>
@@ -38,14 +51,6 @@
 		
 	</div>
 
-	<script src="/public/scripts/jquery.min.js"></script>
-	<script src="/public/scripts/bootstrap.min.js"></script>
-	<script src="/public/scripts/angular/angular.min.js"></script>
-	<script src="/public/scripts/angular/angular-ui-router.min.js"></script>
-	<script src="/public/scripts/app.js"></script>
-	<script src="/services/index.js"></script>
-	<script src="/controllers/IndexCtrl.js"></script>
-	<script src="/controllers/UserCtrl.js"></script>
-	<script src="/controllers/WishCtrl.js"></script>
+	
 </body>
 </html>

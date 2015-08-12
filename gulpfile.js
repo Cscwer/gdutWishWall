@@ -7,7 +7,7 @@ var nodemon = require('gulp-nodemon');
 var livereload = require('gulp-livereload');
 
 var nodemonConfig = {
-	script: 'app.js'
+	script: 'server.js'
 };
 
 gulp.task('serve', ['watch'], function() {

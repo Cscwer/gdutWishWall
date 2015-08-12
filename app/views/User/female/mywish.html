@@ -8,14 +8,17 @@
 	   	 <div class="panel-body">
 	   	 	<p ng-show="PickedWishes.length === 0">暂时还没有被领取的愿望</p>
 	      		<div class="hero-unit" ng-repeat="wish in PickedWishes">
-				<h1>
-					{{wish.username}}
+				<h1 ng-bind="wish.username">
 				</h1>
 				<p>
 					{{wish.wish}}
 				</p>
 				<p>
+					{{wish.wishpickername}}
+				</p>
+				<p>
 					<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker})">联系他</a>
 				</p>
 			</div>
 	   	 </div>

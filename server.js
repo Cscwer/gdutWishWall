@@ -14,7 +14,7 @@ var app = express();
 
 var server = http.createServer(app);
 
-// var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(server);
 
 //引用 passport
 var passport = require('passport');
@@ -22,6 +22,7 @@ var LocalStrategy = require('passport-local').Strategy;
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('port', 18080);
 
 //引用数据模板
 var User = require('./models/user.js');
@@ -178,26 +179,26 @@ app.get('/getmalewish', function(req, res) {
 });
 
 //设置 socket 日志级别
-// io.set('log level', 1); 
+io.set('log level', 1); 
 
 //WebSocket 连接监听
-// io.on('connection', function(socket) {
-//     socket.emit('open'); //通知客户端已经连接
+io.on('connection', function(socket) {
+    socket.emit('open'); //通知客户端已经连接
 
-//     //打印握手信息
-//     console.log(socket.handshake);
+    //打印握手信息
+    console.log(socket.handshake);
 
-//     //构造客户端对象
-//     var client = {
+    //构造客户端对象
+    var client = {
         
-//     };
+    };
 
-//     socket.on('message', function(msg) {
-//         console.log(msg);
-//         socket.emit('msg', msg);
-//         socket.broadcast.emit('msg', msg);
-//     });
-// });
+    socket.on('message', function(msg) {
+        console.log(msg);
+        socket.emit('msg', msg);
+        socket.broadcast.emit('msg', msg);
+    });
+});
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
