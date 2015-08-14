@@ -4,17 +4,30 @@
 		 <tbody>
 			 <tr>
 			       	<td>用户名</td>
-			       	<td>{{username}}</td>
+			       	<td>{{user.username}}</td>
 			 </tr>
 			 <tr>
 			       	<td>邮箱</td>
-			       	<td>{{email}}</td>
+			       	<td>{{user.email}}</td>
+			 </tr>
+			 <tr ng-if="user.sex === 'female'">
+			 	<td>姓名</td>
+			 	<td>{{user.real_name}}</td>
 			 </tr>
 			 <tr>
 			       	<td>性别</td>
-			       	<td ng-show="sex === 'male'">男</td>
-			       	<td ng-show="sex === 'female'">女</td>
+			       	<td ng-show="user.sex === 'male'">男</td>
+			       	<td ng-show="user.sex === 'female'">女</td>
 			 </tr>
+			 <tr ng-if="user.sex === 'female'">
+			 	<td>校区</td>
+			 	<td>{{user.school_area}}</td>
+			 </tr>
+			 <tr ng-if="user.sex === 'female'">
+			 	<td>学院</td>
+			 	<td>{{user.college_name}}</td>
+			 </tr>
+
 		 </tbody>
 	</table>
 </div>

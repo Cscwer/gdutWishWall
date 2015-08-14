@@ -119,14 +119,24 @@ app.get('/getUnpickedWish', function(req, res) {
 
 //处理许愿请求
 app.post('/putwish', function(req, res) {
+    console.log(req.body.wish);
     var newWish = new Wish({
-        user: req.body.user,
-        username: req.body.username,
-        wishType: req.body.wishType,
-        wish: req.body.wish
+        user: req.body.wish.user,
+        username: req.body.wish.username,
+        wishType: req.body.wish.wishType,
+        wish: req.body.wish.wish,
+        school_area: req.body.info.school_area
     });
     newWish.save(function(err) {
-        res.end();
+        User.update({_id: req.body.wish.user},{
+            real_name: req.body.info.real_name, 
+            school_area: req.body.info.school_area,
+            college_name: req.body.info.college_name,
+            long_tel: req.body.info.long_tel,
+            short_tel: req.body.info.short_tel
+        },{safe: false},function(err, num) {
+            res.end();
+        })
     });
 });
 

@@ -6,7 +6,12 @@ var UserSchema = new Schema({
     username: String,
     email: String,
     sex: String,
-    password: String
+    password: String,
+    real_name: String,
+    school_area: String,
+    college_name: String,
+    long_tel: String,
+    short_tel: String
 });
 
 //验证密码方法

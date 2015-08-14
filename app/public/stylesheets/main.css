@@ -16,7 +16,7 @@ html {
 .badge:empty {
 	display: inline-block;
 }
-.badge {
+.wishwall_badge {
 	background-color: red;
 	padding: 3px 3px;
 	min-width: 0;

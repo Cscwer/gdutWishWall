@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-// var isDev = true;
-var isDev = false;
+var isDev = true;
+// var isDev = false;
 var db = exports.Db = mongoose.createConnection();
 var options = {
     db: {
@@ -9,10 +9,10 @@ var options = {
     server: {
         poolSize: 5
     },
-    user: '87b918b63554437c8da82874f7fd958b',
-    pass: 'd15e4fcb62ba45dba9395418ee12a472'
-    // user: '',
-    // pass: ''
+    // user: '87b918b63554437c8da82874f7fd958b',
+    // pass: 'd15e4fcb62ba45dba9395418ee12a472'
+    user: '',
+    pass: ''
 }
 
 var host = isDev ? '127.0.0.1' : 'mongo.duapp.com';
