@@ -38,6 +38,19 @@ app.factory('GetUserInfoService', ['$http', function($http) {
     };
 }]);
 
+//更新用户信息
+app.factory('UpdateInfoService', ['$http', function($http) {
+    return {
+        updateInfo: function(data) {
+            return $http({
+                method: 'POST',
+                url: '/updateinfo',
+                data: data
+            })
+        }
+    };
+}]);
+
 //获取所有未领取愿望
 app.factory('GetUnpickedWish', ['$http', function($http) {
     return {
@@ -76,17 +89,17 @@ app.factory('FindWishService', ['$http', function($http) {
 }]);
 
 //男生领取愿望
-app.factory('PickWishService', ['$http', function($http) {
-    return {
-        pickWish: function(data) {
-            return $http({
-                method: 'POST',
-                url: '/pickwish',
-                data: data
-            });
-        }
-    };
-}]);
+// app.factory('PickWishService', ['$http', function($http) {
+//     return {
+//         pickWish: function(data) {
+//             return $http({
+//                 method: 'POST',
+//                 url: '/pickwish',
+//                 data: data
+//             });
+//         }
+//     };
+// }]);
 
 //女生获取自己的愿望
 app.factory('GetFemaleWishService', ['$http', function($http) {
@@ -98,6 +111,37 @@ app.factory('GetFemaleWishService', ['$http', function($http) {
                 data: data
             });
         }
+    };
+}]);
+
+//更新愿望状态
+app.factory('UpdateWishService', ['$http', function($http) {
+    return {
+        updateWishState: function(data) {
+            return $http({
+                method: 'POST',
+                url: '/updatewishstate',
+                data: data
+            });
+        },
+
+        updateWish: function(data) {
+            return $http({
+                method: 'POST',
+                url: '/refreshwish',
+                data: data
+            });
+        },
+
+        deleteWish: function(data) {
+            return $http({
+                method: 'POST',
+                url: '/deletewish',
+                data: data
+            });
+        },
+
+        
     };
 }]);
 

@@ -119,27 +119,34 @@ app.get('/getUnpickedWish', function(req, res) {
 
 //处理许愿请求
 app.post('/putwish', function(req, res) {
-    console.log(req.body.wish);
     var newWish = new Wish({
-        user: req.body.wish.user,
-        username: req.body.wish.username,
-        wishType: req.body.wish.wishType,
-        wish: req.body.wish.wish,
-        school_area: req.body.info.school_area
+        user: req.body.user,
+        username: req.body.username,
+        wishType: req.body.wishType,
+        wish: req.body.wish,
+        school_area: req.body.school_area
     });
     newWish.save(function(err) {
-        User.update({_id: req.body.wish.user},{
-            real_name: req.body.info.real_name, 
-            school_area: req.body.info.school_area,
-            college_name: req.body.info.college_name,
-            long_tel: req.body.info.long_tel,
-            short_tel: req.body.info.short_tel
-        },{safe: false},function(err, num) {
-            res.end();
-        })
+        res.end();
     });
 });
 
+//更新用户信息
+app.post('/updateinfo', function(req, res) {
+    User.update({
+        _id: req.body.user
+    }, {
+        $set: {
+            real_name: req.body.real_name,
+            school_area: req.body.school_area,
+            college_name: req.body.college_name,
+            long_tel: req.body.long_tel,
+            short_tel: req.body.short_tel
+        }
+    }, function(err, num) {
+        res.end();
+    });
+});
 //获取指定愿望
 app.get('/getwish', function(req, res) {
     Wish.findOne({
@@ -174,6 +181,42 @@ app.get('/getfemalewish', function(req, res) {
         res.send({
             wishes: wishes
         });
+    });
+});
+
+//更新愿望状态
+app.post('/updatewishstate', function(req, res) {
+    Wish.update({
+        _id: req.body.wishId
+    }, {
+        $set: {
+            ispicked: req.body.type,
+            wishpicker: req.body.wishPicker,
+            wishpickername: req.body.wishPickerName
+        }
+    }, function(err, docs) {
+        res.end();
+    });
+});
+
+//修改愿望
+app.post('/refreshwish', function(req, res) {
+    Wish.update({
+        _id: req.body.wishId
+    }, {
+        $set: {
+            wishType: req.body.wishType,
+            wish: req.body.wish
+        }
+    }, function(err, docs) {
+        res.end();
+    });
+});
+
+//删除愿望
+app.post('/deletewish', function(req, res) {
+    Wish.remove({_id: req.body.wishId}, function(err, docs) {
+        res.end();
     });
 });
 

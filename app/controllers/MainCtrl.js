@@ -20,13 +20,7 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
                 $rootScope.isLogined = true;
                 $rootScope.username = sessionStorage.getItem('username');
                 $rootScope.userId = sessionStorage.getItem('uid');
-                // $rootScope.email = sessionStorage.getItem('email');
-                // if (sessionStorage.getItem('sex') == 'male') {
                 $rootScope.sex = sessionStorage.getItem('sex');
-                // }
-                // if (sessionStorage.getItem('sex') == 'female') {
-                // $scope.sex = 'female';
-                // }
             } else {
                 $rootScope.isLogined = false;
                 $rootScope.username = '';
@@ -58,7 +52,8 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
         //基于 socket.io 的消息推送
         $scope.hasNewMsg = false;
         $rootScope.isConnected = false;
-        $rootScope.socket = io.connect('http://gdutgirl.duapp.com');
+        // $rootScope.socket = io.connect('http://gdutgirl.duapp.com');
+        $rootScope.socket = io.connect('localhost:18080');
         $rootScope.socket.on('open', function() {
             $rootScope.isConnected = true;
             console.log('连接成功');
@@ -127,7 +122,6 @@ app.controller('LoginCtrl', ['$scope', '$state', 'LoginService',
                         sessionStorage.setItem('username', data.user.username);
                         sessionStorage.setItem('uid', data.user._id);
                         sessionStorage.setItem('sex', data.user.sex);
-                        // sessionStorage.setItem('email', data.user.email);
                         //路由状态跳转
                         $state.go('index');
                     }
@@ -137,8 +131,8 @@ app.controller('LoginCtrl', ['$scope', '$state', 'LoginService',
 ]);
 
 //女生控制器
-app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', 'WishData', 'GetUserInfoService',
-    function($scope, $state, PutWishService, WishData, GetUserInfoService) {
+app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', 'WishData', 'GetUserInfoService', 'UpdateInfoService',
+    function($scope, $state, PutWishService, WishData, GetUserInfoService, UpdateInfoService) {
 
         if (sessionStorage.getItem('username')) {
 
@@ -173,23 +167,27 @@ app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', 'WishData', 
 
                 //组装个人信息数据包
                 $scope.InfoData = {
+                    user: sessionStorage.getItem('uid'),
                     real_name: $scope.real_name,
                     school_area: $scope.school_area,
                     college_name: $scope.college_name,
                     long_tel: $scope.long_tel,
                     short_tel: $scope.short_tel
                 };
+                WishData.school_area = $scope.school_area;
                 console.log(WishData);
-                var data = {
-                    wish: WishData,
-                    info: $scope.InfoData
-                };
-                console.log(data);
-                PutWishService.putWish(data)
+                //发布愿望
+                PutWishService.putWish(WishData)
                     .success(function(data, status) {
-                        if(status === 200) {
-                            alert('许愿成功');
-                            $state.go('index');
+                        if (status === 200) {
+                            //更新个人信息
+                            UpdateInfoService.updateInfo($scope.InfoData)
+                                .success(function(data, status) {
+                                    if (status === 200) {
+                                        alert('许愿成功');
+                                        $state.go('index');
+                                    }
+                                })
                         }
                     });
 
@@ -207,12 +205,10 @@ app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', 'WishData', 
 app.controller('MsgCtrl', ['$scope', '$rootScope', '$state',
     function($scope, $rootScope, $state) {
         $scope.thisUser = sessionStorage.getItem('uid');
-        // $rootScope.SystemMsg = JSON.parse(localStorage.getItem('SystemMsg')) || [];
         console.log($rootScope.SystemMsg);
         $scope.clearMsg = function() {
             localStorage.removeItem('SystemMsg');
             $rootScope.SystemMsg = [];
-            // $state.reload('user.message');
         };
     }
 ]);
@@ -220,17 +216,6 @@ app.controller('MsgCtrl', ['$scope', '$rootScope', '$state',
 //用户联系控制器
 app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams',
     function($scope, $rootScope, $stateParams) {
-        // $rootScope.isConnected = false;
-
-        // $scope.myMsg = [];
-        // for(msg of SystemMsg) {
-        // 	if(msg.receiver === $stateParams.userId) {
-        // 		$scope.myMsg.push(msg);
-        // 	}
-        // 	if(msg.sender === sessionStorage.getItem('uid')) {
-
-        // 	}
-        // }
         $scope.thatUser = $stateParams.userId;
         $scope.thisUser = sessionStorage.getItem('uid');
         $scope.sendMsg = function() {
@@ -249,8 +234,8 @@ app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams',
 
 
 //愿望控制器
-app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService', 'PickWishService',
-    function($scope, $state, $stateParams, FindWishService, PickWishService) {
+app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService', 'UpdateWishService',
+    function($scope, $state, $stateParams, FindWishService, UpdateWishService) {
         var data = {
             wishId: $stateParams.wishId
         };
@@ -264,30 +249,55 @@ app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService
         $scope.pickWish = function() {
 
             if (sessionStorage.getItem('username')) {
-                var data = {
-                    wish: $scope.wish,
-                    wishPicker: sessionStorage.getItem('uid'),
-                    wishPickerName: sessionStorage.getItem('username')
-                };
-                PickWishService.pickWish(data)
-                    .success(function(data, status) {
-                        if (status === 200) {
-                            alert('领取成功');
-                            $state.go('index');
-                        }
-                    });
+
+                if (confirm('确定领取该愿望?')) {
+                    var data = {
+                        type: 1,
+                        wishId: $scope.wish._id,
+                        wishPicker: sessionStorage.getItem('uid'),
+                        wishPickerName: sessionStorage.getItem('username')
+                    };
+
+                    UpdateWishService.updateWishState(data)
+                        .success(function(data, status) {
+                            if (status === 200) {
+                                alert('您的领取申请已经发送，请等待对方确认你的请求');
+                                $state.go('index');
+                            }
+                        });
+
+                }
+
             } else {
                 $state.go('user.login');
             }
+        };
+
+        //修改愿望
+        $scope.refreshWish = function(wish) {
+            var data = {
+                wishId: wish._id,
+                wishType: wish.wishType,
+                wish: wish.wish
+            };
+            UpdateWishService.updateWish(data)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        alert('修改成功');
+                        $state.go('index');
+                    }
+                });
         };
     }
 ]);
 
 //女生愿望控制器
-app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService',
-    function($scope, $state, GetFemaleWishService) {
+app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'UpdateWishService',
+    function($scope, $state, GetFemaleWishService, UpdateWishService) {
         $scope.UnpickWishes = [];
         $scope.PickedWishes = [];
+        $scope.ApplyToPickWishes = [];
+        $scope.CompletedWishes = [];
         //获取女生自己的愿望
         var data = {
             userId: sessionStorage.getItem('uid')
@@ -303,11 +313,96 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService',
                             $scope.UnpickWishes.push(data.wishes[i]);
                         }
                         if (data.wishes[i].ispicked === 1) {
+                            $scope.ApplyToPickWishes.push(data.wishes[i]);
+                        }
+                        if (data.wishes[i].ispicked === 2) {
                             $scope.PickedWishes.push(data.wishes[i]);
+                        }
+                        if (data.wishes[i].ispicked === 3) {
+                            $scope.CompletedWishes.push(data.wishes[i]);
                         }
                     }
                 }
             });
+
+        //允许领取愿望
+        $scope.allowPick = function(wish) {
+            if (confirm('确定允许吗？')) {
+                var data = {
+                    type: 2,
+                    wishId: wish._id,
+                    wishPicker: wish.wishpicker,
+                    wishPickerName: wish.wishpickername
+                };
+                UpdateWishService.updateWishState(data)
+                    .success(function(data, status) {
+                        if (status === 200) {
+                            alert('状态更新成功');
+                            $state.go('wish.femalewish', {}, {
+                                reload: true
+                            });
+                        }
+                    });
+            }
+        };
+
+        //拒绝领取愿望
+        $scope.refusePick = function(wish) {
+            var data = {
+                type: 0,
+                wishId: wish._id,
+                wishPicker: '',
+                wishPickerName: ''
+            };
+            UpdateWishService.updateWishState(data)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        alert('状态更新成功');
+                        $state.go('wish.femalewish', {}, {
+                            reload: true
+                        });
+                    }
+                });
+        };
+
+        //删除愿望
+        $scope.deleteWish = function(wish) {
+            if (confirm('确定要删除吗？')) {
+                var data = {
+                    wishId: wish._id
+                };
+                UpdateWishService.deleteWish(data)
+                    .success(function(data, status) {
+                        if (status === 200) {
+                            alert('删除成功');
+                            $state.go('wish.femalewish', {}, {
+                                reload: true
+                            });
+                        }
+                    });
+            }
+
+        };
+
+        //确认完成愿望
+        $scope.completeWish = function(wish) {
+            if (confirm('确定要完成吗？')) {
+                var data = {
+                    type: 3,
+                    wishId: wish._id,
+                    wishPicker: wish.wishpicker,
+                    wishPickerName: wish.wishpickername
+                };
+                UpdateWishService.updateWishState(data)
+                    .success(function(data, status) {
+                        if (status === 200) {
+                            $state.go('wish.femalewish', {}, {
+                                reload: true
+                            });
+                        }
+                    });
+            }
+        };
 
     }
 ]);
@@ -315,12 +410,26 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService',
 //男生愿望控制器
 app.controller('MaleWishCtrl', ['$scope', '$state', 'GetMaleWishService',
     function($scope, $state, GetMaleWishService) {
+        $scope.ApplyToPickWishes = [];
+        $scope.CompletedWishes = [];
+        $scope.PickedWishes = [];
         var data = {
             pickerId: sessionStorage.getItem('uid')
         };
         GetMaleWishService.getWish(data)
             .success(function(data, status) {
                 if (status === 200) {
+                    for (var i = 0; i < data.wishes.length; i++) {
+                        if (data.wishes[i].ispicked === 1) {
+                            $scope.ApplyToPickWishes.push(data.wishes[i]);
+                        }
+                        if (data.wishes[i].ispicked === 2) {
+                            $scope.PickedWishes.push(data.wishes[i]);
+                        }
+                        if (data.wishes[i].ispicked === 3) {
+                            $scope.CompletedWishes.push(data.wishes[i]);
+                        }
+                    }
                     $scope.wishes = data.wishes;
                 }
             })

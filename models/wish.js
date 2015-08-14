@@ -15,8 +15,14 @@ var WishSchema = new Schema({
         type: Number,
         default: 0
     },
-    wishpicker: String,
-    wishpickername: String
+    wishpicker: {
+        type: String,
+        default: ''
+    },
+    wishpickername: {
+        type: String,
+        default: ''
+    }
 });
 
 

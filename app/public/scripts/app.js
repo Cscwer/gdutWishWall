@@ -50,6 +50,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: '/views/User/female/mywish.html',
             controller: 'FemaleWishCtrl'
         })
+        .state('wish.changewish', {
+            url: '/female/changewish/:wishId',
+            templateUrl: '/views/User/female/changewish.html',
+            controller: 'WishCtrl'
+        })
         .state('wish.malewish', {
             url: '/male/mywish/:pickerId',
             templateUrl: '/views/User/male/mywish.html',
