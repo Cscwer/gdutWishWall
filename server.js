@@ -27,6 +27,7 @@ app.set('port', 18080);
 //引用数据模板
 var User = require('./models/user.js');
 var Wish = require('./models/wish.js');
+var Msg = require('./models/message.js');
 
 app.use(favicon());
 app.use(logger('dev'));
@@ -71,9 +72,7 @@ passport.use('local', new LocalStrategy(
                     message: 'Incorrect username.'
                 });
             }
-            // if (user.password !== password) {
-            //     return done(null, false, { message: 'Incorrect password.' });
-            // }
+
             return done(null, user);
 
         });
@@ -215,10 +214,13 @@ app.post('/refreshwish', function(req, res) {
 
 //删除愿望
 app.post('/deletewish', function(req, res) {
-    Wish.remove({_id: req.body.wishId}, function(err, docs) {
+    Wish.remove({
+        _id: req.body.wishId
+    }, function(err, docs) {
         res.end();
     });
 });
+
 
 //男生获取自己的愿望
 app.get('/getmalewish', function(req, res) {
@@ -231,21 +233,70 @@ app.get('/getmalewish', function(req, res) {
     });
 });
 
+//用户获取消息记录
+app.get('/getmessage', function(req, res) {
+    Msg.find({
+        receiver: req.query.userId
+    }).sort({
+        _id: -1
+    }).exec(function(err, msg) {
+        res.send({
+            msgs: msg
+        });
+    });
+});
+
+//阅读消息处理
+app.get('/readmessage', function(req, res) {
+    Msg.update({
+        receiver: req.query.userId
+    }, {
+        $set: {
+            hadread: 1
+        }
+    }, {
+        multi: true
+    }, function(err, docs) {
+        res.end();
+    });
+});
+
+//获取聊天记录
+app.post('/getcontact', function(req, res) {
+    Msg.find({
+        msg_type: 'User'
+    })
+    .where('receiver').in([req.body.this, req.body.that])
+    .where('sender').in([req.body.this, req.body.that])
+    .exec(function(err, contacts) {
+        res.send({contacts: contacts});
+    });
+});
+
 //设置 socket 日志级别
-io.set('log level', 1); 
+io.set('log level', 1);
 
 //WebSocket 连接监听
 io.on('connection', function(socket) {
     socket.emit('open'); //通知客户端已经连接
 
-    //打印握手信息
-    console.log(socket.handshake);
+    //接收从客户端发过来的消息
+    socket.on('Msg', function(msg) {
+        console.log(msg);
+        var newMsg = new Msg({
+            msg_type: msg.msg_type,
+            sender: msg.sender,
+            sender_name: msg.sender_name,
+            receiver: msg.receiver,
+            receiver_name: msg.receiver_name,
+            msg: msg.msg
+        });
+        newMsg.save(function(err) {
+            socket.emit('Msg_res', msg);
+            socket.broadcast.emit('Msg_res', msg);
+        });
 
-    //构造客户端对象
-    var client = {
-        
-    };
-
+    });
     socket.on('message', function(msg) {
         console.log(msg);
         socket.emit('msg', msg);

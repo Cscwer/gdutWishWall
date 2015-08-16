@@ -9,10 +9,11 @@ app.controller('IndexCtrl', ['$scope', 'GetUnpickedWish',
 ]);
 
 //用户控制器
-app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
-    function($scope, $rootScope, $state, LogoutService) {
+app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService', 'MsgService',
+    function($scope, $rootScope, $state, LogoutService, MsgService) {
         //系统消息队列
-        $rootScope.SystemMsg = JSON.parse(localStorage.getItem('SystemMsg')) || [];
+        // $rootScope.SystemMsg = JSON.parse(localStorage.getItem('SystemMsg')) || [];
+        $rootScope.SystemMsg = [];
 
         //判断用户是否登录以及性别
         var updateLoginState = function() {
@@ -25,7 +26,6 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
                 $rootScope.isLogined = false;
                 $rootScope.username = '';
                 $rootScope.userId = '';
-                // $rootScope.email = '';
                 $rootScope.sex = '';
             }
         };
@@ -44,6 +44,7 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
         };
 
         updateLoginState();
+
         //监听路由跳转事件，跳转后自动更新登录状态
         $rootScope.$on('$stateChangeStart', function() {
             updateLoginState();
@@ -58,25 +59,62 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService',
             $rootScope.isConnected = true;
             console.log('连接成功');
         });
-        $rootScope.socket.on('msg', function(msg) {
-            if (msg.receiver === sessionStorage.getItem('uid') || msg.sender === sessionStorage.getItem('uid')) {
+        // $rootScope.socket.on('msg', function(msg) {
+        //     if (msg.receiver === sessionStorage.getItem('uid') || msg.sender === sessionStorage.getItem('uid')) {
 
+        //         $scope.$apply(function() {
+        //             $rootScope.SystemMsg.push(msg);
+        //         });
+        //         if (msg.receiver === sessionStorage.getItem('uid')) {
+        //             $scope.$apply(function() {
+        //                 $scope.hasNewMsg = true;
+        //             });
+        //         }
+
+        //         localStorage.setItem('SystemMsg', JSON.stringify($rootScope.SystemMsg));
+        //     }
+
+        // });
+
+        $rootScope.socket.on('Msg_res', function(msg) {
+            console.log(msg);
+            //处理系统消息
+            if (msg.receiver === sessionStorage.getItem('uid')) {
                 $scope.$apply(function() {
-                    $rootScope.SystemMsg.push(msg);
+                    $scope.hasNewMsg = true;
                 });
-                if (msg.receiver === sessionStorage.getItem('uid')) {
-                    $scope.$apply(function() {
-                        $scope.hasNewMsg = true;
-                    });
-                }
-
-                localStorage.setItem('SystemMsg', JSON.stringify($rootScope.SystemMsg));
             }
-
         });
+
+        //检查有无未阅读的消息
+        if (sessionStorage.getItem('uid')) {
+            var msgData = {
+                userId: sessionStorage.getItem('uid')
+            };
+            MsgService.getMsg(msgData)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        console.log(data);
+                        for (var i = 0; i < data.msgs.length; i++) {
+                            if (data.msgs[i].hadread === 0) {
+                                // $scope.$apply(function() {
+                                $scope.hasNewMsg = true;
+                                // });
+                            }
+                        }
+                    }
+                });
+        }
+
 
         $scope.cancelMsgCount = function() {
             $scope.hasNewMsg = false;
+            MsgService.readMsg($rootScope.userId)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        console.log("清楚消息");
+                    }
+                });
         };
 
     }
@@ -202,40 +240,76 @@ app.controller('FemaleCtrl', ['$scope', '$state', 'PutWishService', 'WishData', 
 ]);
 
 //消息控制器
-app.controller('MsgCtrl', ['$scope', '$rootScope', '$state',
-    function($scope, $rootScope, $state) {
-        $scope.thisUser = sessionStorage.getItem('uid');
-        console.log($rootScope.SystemMsg);
-        $scope.clearMsg = function() {
-            localStorage.removeItem('SystemMsg');
-            $rootScope.SystemMsg = [];
+app.controller('MsgCtrl', ['$scope', '$rootScope', '$state', 'MsgService',
+    function($scope, $rootScope, $state, MsgService) {
+        $scope.SystemMsg = [];
+        $scope.UserMsg = [];
+        var data = {
+            userId: sessionStorage.getItem('uid')
         };
+        MsgService.getMsg(data)
+            .success(function(data, status) {
+                if (status === 200) {
+                    console.log(data.msgs);
+                    for (var i = 0; i < data.msgs.length; i++) {
+                        if (data.msgs[i].msg_type === 'System') {
+                            $scope.SystemMsg.push(data.msgs[i]);
+                        }
+                        if (data.msgs[i].msg_type === 'User') {
+                            $scope.UserMsg.push(data.msgs[i]);
+                        }
+                    }
+                }
+            });
     }
 ]);
 
 //用户联系控制器
-app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams',
-    function($scope, $rootScope, $stateParams) {
-        $scope.thatUser = $stateParams.userId;
+app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams', 'ContactService',
+    function($scope, $rootScope, $stateParams, ContactService) {
         $scope.thisUser = sessionStorage.getItem('uid');
+        $scope.thatUser = $stateParams.userId;
+        var contact = {
+            this: sessionStorage.getItem('uid'),
+            that: $stateParams.userId
+        };
+        var updateContact = function() {
+
+            ContactService.getContact(contact)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        $scope.contacts = data.contacts;
+                        console.log(data.contacts);
+                    }
+                });
+        };
+
+        updateContact();
+        $rootScope.socket.on('Msg_res', function(msg) {
+            updateContact();
+        });
         $scope.sendMsg = function() {
-            var now = new Date();
             var msg = {
+                msg_type: 'User',
                 msg: $scope.contact_msg,
                 receiver: $stateParams.userId,
+                receiver_name: $stateParams.username,
                 sender: sessionStorage.getItem('uid'),
-                sender_name: sessionStorage.getItem('username'),
-                time: now.getTime()
+                sender_name: sessionStorage.getItem('username')
             };
-            $rootScope.socket.emit('message', msg);
+            $scope.contact_msg = '';
+            $rootScope.socket.emit('Msg', msg);
+            $rootScope.socket.on('Msg_res', function(msg) {
+                updateContact();
+            });
         };
     }
 ]);
 
 
 //愿望控制器
-app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService', 'UpdateWishService',
-    function($scope, $state, $stateParams, FindWishService, UpdateWishService) {
+app.controller('WishCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'FindWishService', 'UpdateWishService',
+    function($scope, $rootScope, $state, $stateParams, FindWishService, UpdateWishService) {
         var data = {
             wishId: $stateParams.wishId
         };
@@ -261,6 +335,15 @@ app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService
                     UpdateWishService.updateWishState(data)
                         .success(function(data, status) {
                             if (status === 200) {
+                                var msg = {
+                                    msg_type: 'System',
+                                    sender: sessionStorage.getItem('uid'),
+                                    sender_name: sessionStorage.getItem('username'),
+                                    receiver: $scope.wish.user,
+                                    receiver_name: $scope.wish.username,
+                                    msg: '申请领取你的愿望'
+                                };
+                                $rootScope.socket.emit('Msg', msg);
                                 alert('您的领取申请已经发送，请等待对方确认你的请求');
                                 $state.go('index');
                             }
@@ -292,8 +375,8 @@ app.controller('WishCtrl', ['$scope', '$state', '$stateParams', 'FindWishService
 ]);
 
 //女生愿望控制器
-app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'UpdateWishService',
-    function($scope, $state, GetFemaleWishService, UpdateWishService) {
+app.controller('FemaleWishCtrl', ['$scope', '$rootScope', '$state', 'GetFemaleWishService', 'UpdateWishService', 'MsgService',
+    function($scope, $rootScope, $state, GetFemaleWishService, UpdateWishService, MsgService) {
         $scope.UnpickWishes = [];
         $scope.PickedWishes = [];
         $scope.ApplyToPickWishes = [];
@@ -305,7 +388,6 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'U
         GetFemaleWishService.getWish(data)
             .success(function(data, status) {
                 if (status === 200) {
-                    // $scope.UnpickWishes = data.wishes;
                     console.log(data.wishes);
                     //筛选出已被领取和未被领取的愿望
                     for (var i = 0; i < data.wishes.length; i++) {
@@ -334,9 +416,19 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'U
                     wishPicker: wish.wishpicker,
                     wishPickerName: wish.wishpickername
                 };
+                var msg = {
+                    msg_type: 'System',
+                    sender: sessionStorage.getItem('uid'),
+                    sender_name: sessionStorage.getItem('username'),
+                    receiver: wish.wishpicker,
+                    receiver_name: wish.wishpickername,
+                    msg: '接受了你的领取请求，请及时处理'
+                    // time: new Date()
+                };
                 UpdateWishService.updateWishState(data)
                     .success(function(data, status) {
                         if (status === 200) {
+                            $rootScope.socket.emit('Msg', msg);
                             alert('状态更新成功');
                             $state.go('wish.femalewish', {}, {
                                 reload: true
@@ -354,9 +446,19 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'U
                 wishPicker: '',
                 wishPickerName: ''
             };
+            var msg = {
+                msg_type: 'System',
+                sender: sessionStorage.getItem('uid'),
+                sender_name: sessionStorage.getItem('username'),
+                receiver: wish.wishpicker,
+                receiver_name: wish.wishpickername,
+                msg: '拒绝了你的领取请求'
+                // time: new Date()
+            };
             UpdateWishService.updateWishState(data)
                 .success(function(data, status) {
                     if (status === 200) {
+                        $rootScope.socket.emit('Msg', msg);
                         alert('状态更新成功');
                         $state.go('wish.femalewish', {}, {
                             reload: true
@@ -393,9 +495,18 @@ app.controller('FemaleWishCtrl', ['$scope', '$state', 'GetFemaleWishService', 'U
                     wishPicker: wish.wishpicker,
                     wishPickerName: wish.wishpickername
                 };
+                var msg = {
+                    msg_type: 'System',
+                    sender: sessionStorage.getItem('uid'),
+                    sender_name: sessionStorage.getItem('username'),
+                    receiver: wish.wishpicker,
+                    receiver_name: wish.wishpickername,
+                    msg: '确认完成了你领取的愿望'
+                };
                 UpdateWishService.updateWishState(data)
                     .success(function(data, status) {
                         if (status === 200) {
+                            $rootScope.socket.emit('Msg', msg);
                             $state.go('wish.femalewish', {}, {
                                 reload: true
                             });

@@ -66,7 +66,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         	controller: 'MsgCtrl'
         })
         .state('user.contact', {
-        	url: '/contact/:userId',
+        	url: '/contact/:userId/:username',
         	templateUrl: '/views/User/contact.html',
         	controller: 'ContactCtrl'
         })

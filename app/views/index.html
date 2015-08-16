@@ -30,16 +30,16 @@
 		           	<span class="icon-bar"></span>
 		        </button>
 
-	        	<a class="navbar-brand" ui-sref="index">许愿墙{{username}}</a>
+	        	<a class="navbar-brand" ui-sref="index" ui-sref-opts="{reload: true}">许愿墙{{username}}</a>
 	     	</div>
 	     	<div class="collapse navbar-collapse" id="example-navbar-collapse">
 		        <ul class="nav navbar-nav">
-		           	<li class="active"><a ui-sref="index">首页</a></li>
+		           	<li class="active"><a ui-sref="index" ui-sref-opts="{reload: true}">首页</a></li>
 		           	<li ng-hide="isLogined"><a ui-sref="user.login">登录</a></li>
 		           	<li ng-show="isLogined"><a ui-sref="user.info({userId: userId})">个人中心</a></li>
-		           	<li ng-show="sex === 'female'"><a ui-sref="wish.femalewish">我许下的愿望</a></li>
-		           	<li ng-show="sex === 'male'"><a ui-sref="wish.malewish">我领取的愿望</a></li>
-		           	<li ng-show="isLogined"><a ui-sref="user.message"  ng-click="cancelMsgCount()">消息中心 <span class="wishwall_badge badge" ng-show="hasNewMsg"></span></a></li>
+		           	<li ng-show="sex === 'female'"><a ui-sref="wish.femalewish" ui-sref-opts="{reload: true}">我许下的愿望</a></li>
+		           	<li ng-show="sex === 'male'"><a ui-sref="wish.malewish" ui-sref-opts="{reload: true}">我领取的愿望</a></li>
+		           	<li ng-show="isLogined"><a ui-sref="user.message"  ng-click="cancelMsgCount()" ui-sref-opts="{reload: true}">消息中心 <span class="wishwall_badge badge" ng-show="hasNewMsg"></span></a></li>
 		           	<li ng-show="sex === 'female'"><a ui-sref="user.writewish">许愿</a></li>
 		           	<li ng-show="isLogined"><a ui-sref="user.logout" ng-click='doLogout()'>注销</a></li>
 		           	<!-- <input type="checkbox" ng-model="checked"> -->

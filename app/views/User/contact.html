@@ -1,15 +1,9 @@
 <div class="msg-container">
-   <div ng-repeat="msg in SystemMsg track by $index" ng-if="msg.sender === thatUser || msg.receiver === thatUser" ng-class="msg.sender === thatUser ? 'that' : (msg.receiver === thatUser ? 'this' : '')">
-      {{msg.time | date: "yyyy-MM-dd  H:m"}}
+   <div ng-repeat="msg in contacts track by $index" ng-if="msg.sender === thatUser || msg.receiver === thatUser" ng-class="msg.sender === thatUser ? 'that' : (msg.receiver === thatUser ? 'this' : '')">
+      {{msg.msg_time | date: "yyyy-MM-dd  H:m"}}
       <br>
       <p>{{msg.msg}}</p>
-      
    </div>
-   <!-- <div class="this" style="text-align: right;" ng-repeat="msg in SystemMsg" ng-if="msg.receiver === thatUser">
-      {{msg.time | date: "yyyy-MM-dd H:m"}}
-      <br>
-      <p>{{msg.msg}}</p>
-   </div> -->
    
 </div>
 <div style="position: fixed;bottom: 5px;margin-right: 10px;">

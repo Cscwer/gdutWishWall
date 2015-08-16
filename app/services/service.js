@@ -156,3 +156,37 @@ app.factory('GetMaleWishService', ['$http', function($http) {
         }
     };
 }]);
+
+//消息服务
+app.factory('MsgService', ['$http', function($http) {
+    return {
+        getMsg: function(data) {
+            return $http({
+                method: 'GET',
+                url: '/getmessage?userId=' + data.userId
+            });
+        },
+
+        readMsg: function(uid) {
+            return $http({
+                method: 'GET',
+                url: '/readmessage?userId=' + uid
+            });
+        },
+
+        
+    };
+}]);
+
+//聊天服务
+app.factory('ContactService', ['$http', function($http) {
+    return {
+        getContact: function(data) {
+            return $http({
+                method: 'POST',
+                url: '/getcontact',
+                data: data
+            });
+        }
+    };
+}]);

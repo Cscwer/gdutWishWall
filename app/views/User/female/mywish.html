@@ -20,7 +20,7 @@
 					<a class="btn btn-primary btn-large" ng-click="allowPick(wish)">允许</a>
 					<a class="btn btn-primary btn-large" ng-click="refusePick(wish)">拒绝</a>
 					<a class="btn btn-primary btn-large" ui-sref="user.info({userId: wish.wishpicker})">查看资料</a>
-					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker})">联系他</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker,username: wish.wishpickername})">联系他</a>
 				</p>
 			</div>
 	   	 </div>
@@ -44,7 +44,7 @@
 				</p>
 				<p>
 					<a class="btn btn-primary btn-large" ng-click="completeWish(wish)">确认完成</a>
-					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker})">联系他</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker, username: wish.wishpickername})">联系他</a>
 				</p>
 			</div>
 	   	 </div>
@@ -87,7 +87,7 @@
 					{{wish.wish}}
 				</p>
 				<p>
-					<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
+					<!-- <a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a> -->
 				</p>
 			</div>
 		 </div>

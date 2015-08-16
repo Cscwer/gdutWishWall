@@ -16,7 +16,7 @@
 				</p>
 				<p>
 					<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
-					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user})">联系她</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user,username: wish.username})">联系她</a>
 				</p>
 			</div>
 	   	 </div>
@@ -38,7 +38,7 @@
 				</p>
 				<p>
 					<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
-					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user})">联系她</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user,username: wish.username})">联系她</a>
 				</p>
 			</div>
 	   	 </div>
@@ -59,8 +59,8 @@
 					{{wish.wish}}
 				</p>
 				<p>
-					<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
-					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user})">联系她</a>
+					<!-- <a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a> -->
+					<!-- <a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.user})">联系她</a> -->
 				</p>
 			</div>
 	   	 </div>
