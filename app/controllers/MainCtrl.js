@@ -1,3 +1,5 @@
+
+
 //主页控制器
 app.controller('IndexCtrl', ['$scope', 'GetUnpickedWish',
     function($scope, GetUnpickedWish) {
@@ -9,11 +11,31 @@ app.controller('IndexCtrl', ['$scope', 'GetUnpickedWish',
 ]);
 
 //用户控制器
-app.controller('UserCtrl', ['$scope', '$rootScope', '$state', 'LogoutService', 'MsgService',
-    function($scope, $rootScope, $state, LogoutService, MsgService) {
+app.controller('UserCtrl', ['$scope', '$rootScope', '$state', '$location', '$http', 'LogoutService', 'MsgService', 'WeChatService',
+    function($scope, $rootScope, $state, $location, $http, LogoutService, MsgService, WeChatService) {
+        var code = $location.search().code;
+        // alert(code);
         //系统消息队列
         // $rootScope.SystemMsg = JSON.parse(localStorage.getItem('SystemMsg')) || [];
         $rootScope.SystemMsg = [];
+
+        //获取用户的授权 Access_Token
+        // $http.jsonp('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxc0328e0fe1f4cc8b&secret=06026b20b7c510a6bdebf8b9218d3e6f&code=' + code + '&grant_type=authorization_code')
+        // .success(function(data, status) {
+        //     console.log(status);
+        //     // alert('success');
+        //     // alert(data.openid);
+        // });
+        // 001bb9d9b8ab33ddf2a251b14e619948
+        WeChatService.getAccessToken(code)
+            .success(function(data, status) {
+                alert('success');
+                if (status === 200) {
+                    alert(data.openid);
+                } else {
+                    alert('fail');
+                }
+            });
 
         //判断用户是否登录以及性别
         var updateLoginState = function() {
@@ -157,6 +179,7 @@ app.controller('LoginCtrl', ['$scope', '$state', 'LoginService',
                 .success(function(data, status) {
                     if (status === 200) {
                         //如果登录成功,则进行会话存储
+                        console.log(data);
                         sessionStorage.setItem('username', data.user.username);
                         sessionStorage.setItem('uid', data.user._id);
                         sessionStorage.setItem('sex', data.user.sex);
@@ -286,6 +309,7 @@ app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams', 'ContactS
 
         updateContact();
         $rootScope.socket.on('Msg_res', function(msg) {
+            $scope.contact_msg = '';
             updateContact();
         });
         $scope.sendMsg = function() {
@@ -297,11 +321,7 @@ app.controller('ContactCtrl', ['$scope', '$rootScope', '$stateParams', 'ContactS
                 sender: sessionStorage.getItem('uid'),
                 sender_name: sessionStorage.getItem('username')
             };
-            $scope.contact_msg = '';
             $rootScope.socket.emit('Msg', msg);
-            $rootScope.socket.on('Msg_res', function(msg) {
-                updateContact();
-            });
         };
     }
 ]);

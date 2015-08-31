@@ -16,6 +16,8 @@ var server = http.createServer(app);
 
 var io = require('socket.io').listen(server);
 
+var nodegrass = require('nodegrass');
+
 //引用 passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -51,7 +53,15 @@ app.use(express.static(path.join(__dirname, 'app')));
 app.use(app.router);
 
 //默认访问 index.html
-app.get('/', function(req, res) {
+// app.get('/', function(req, res) {
+//     res.writeHead(301, {
+//         'Location': 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc0328e0fe1f4cc8b&redirect_uri=http%3A%2F%2F73af7c4a.ngrok.io%2Findex&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+//     });
+//     res.end();
+// });
+
+app.get('/index', function(req, res) {
+    // console.log(req.query);
     res.sendfile('./app/views/index.html');
 });
 
@@ -61,6 +71,7 @@ passport.deserializeUser(User.deserializeUser());
 
 passport.use('local', new LocalStrategy(
     function(username, password, done) {
+
         User.findOne({
             username: username
         }, function(err, user) {
@@ -266,10 +277,19 @@ app.post('/getcontact', function(req, res) {
     Msg.find({
         msg_type: 'User'
     })
-    .where('receiver').in([req.body.this, req.body.that])
-    .where('sender').in([req.body.this, req.body.that])
-    .exec(function(err, contacts) {
-        res.send({contacts: contacts});
+        .where('receiver').in([req.body.this, req.body.that])
+        .where('sender').in([req.body.this, req.body.that])
+        .exec(function(err, contacts) {
+            res.send({
+                contacts: contacts
+            });
+        });
+});
+
+app.get('/getAccessToken', function(req, res) {
+    nodegrass.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxc0328e0fe1f4cc8b&secret=06026b20b7c510a6bdebf8b9218d3e6f&code=' + req.query.code + '&grant_type=authorization_code', function(data, status, headers) {
+        var access_token = JSON.parse(data);
+        console.log(data);
     });
 });
 
@@ -278,6 +298,7 @@ io.set('log level', 1);
 
 //WebSocket 连接监听
 io.on('connection', function(socket) {
+
     socket.emit('open'); //通知客户端已经连接
 
     //接收从客户端发过来的消息
@@ -301,6 +322,10 @@ io.on('connection', function(socket) {
         console.log(msg);
         socket.emit('msg', msg);
         socket.broadcast.emit('msg', msg);
+    });
+
+    socket.on('disconnect', function() {
+        console.log('连接断开');
     });
 });
 

@@ -1,4 +1,4 @@
-<div class="msg-container">
+<div class="msg-container" style="padding-bottom: 50px;">
    <div ng-repeat="msg in contacts track by $index" ng-if="msg.sender === thatUser || msg.receiver === thatUser" ng-class="msg.sender === thatUser ? 'that' : (msg.receiver === thatUser ? 'this' : '')">
       {{msg.msg_time | date: "yyyy-MM-dd  H:m"}}
       <br>

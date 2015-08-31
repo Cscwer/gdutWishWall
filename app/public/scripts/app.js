@@ -77,3 +77,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
         });
 
 });
+
+
+//配置url参数规则
+app.config(['$locationProvider', function($locationProvider) {
+    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
+}]);
