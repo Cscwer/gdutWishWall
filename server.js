@@ -18,6 +18,8 @@ var io = require('socket.io').listen(server);
 
 var nodegrass = require('nodegrass');
 
+var config = require('./config.js');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -251,7 +253,7 @@ app.post('/getcontact', function(req, res) {
 });
 
 app.get('/getAccessToken', function(req, res) {
-    nodegrass.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxc0328e0fe1f4cc8b&secret=06026b20b7c510a6bdebf8b9218d3e6f&code=' + req.query.code + '&grant_type=authorization_code', function(data, status, headers) {
+    nodegrass.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxc0328e0fe1f4cc8b&secret='+config.AppSecret+'&code=' + req.query.code + '&grant_type=authorization_code', function(data, status, headers) {
         var access_token = JSON.parse(data);
         nodegrass.get('https://api.weixin.qq.com/sns/userinfo?access_token=' + access_token.access_token + '&openid=' + access_token.openid + '&lang=zh_CN', function(data, status, headers) {
             var user_data = JSON.parse(data);
