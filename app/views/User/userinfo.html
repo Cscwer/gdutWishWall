@@ -1,0 +1,38 @@
+<div class="row-fluid">
+	<table class="table">
+		 <caption>个人信息</caption>
+		 <tbody>
+			 <tr>
+		       	<td>用户名</td>
+		       	<td>{{user.nickname}}</td>
+			 </tr>
+			 <tr>
+			 	<td>姓名</td>
+			 	<td>{{user.real_name}}</td>
+			 </tr>
+			 <tr>
+		       	<td>性别</td>
+		       	<td ng-if="user.sex === 1">男</td>
+		       	<td ng-if="user.sex === 2">女</td>
+			 </tr>
+			 <tr>
+			 	<td>校区</td>
+			 	<td>{{user.school_area}}</td>
+			 </tr>
+			 <tr>
+			 	<td>学院</td>
+			 	<td>{{user.college_name}}</td>
+			 </tr>
+			 <tr>
+			 	<td>长号</td>
+			 	<td>{{user.long_tel}}</td>
+			 </tr>
+			<tr>
+			 	<td>短号</td>
+			 	<td>{{user.short_tel}}</td>
+			 </tr>
+		 </tbody>
+	</table>
+	<button type="submit" class="btn btn-default" ui-sref="user.writeinfo({rewrite: 1})" ng-if="isSelf">修改信息</button>
+	
+</div>

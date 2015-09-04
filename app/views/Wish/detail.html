@@ -1,0 +1,26 @@
+<div class="row-fluid">
+	<table class="table">
+	   <caption>愿望详情</caption>
+	   <tbody>
+	      <tr>
+	         <td>许愿人</td>
+	         <td>{{wish.username}}</td>
+	      </tr>
+	      <tr>
+	         <td>许愿时间</td>
+	         <td>{{wish.publishDate | date: "yyyy-MM-dd"}}</td>
+	      </tr>
+	      <tr>
+	         <td>愿望类型</td>
+	         <td>{{wish.wishType}}</td>
+	      </tr>
+	      <tr>
+	         <td>愿望内容</td>
+	         <td>{{wish.wish}}</td>
+	      </tr>
+	   </tbody>
+	</table>
+	
+	<button type="submit" class="btn btn-default" ui-sref="user.writeinfo" ng-if="wish.ispicked === 0 && user.sex === 1">领取愿望</button>
+
+</div>

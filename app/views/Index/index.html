@@ -1,0 +1,20 @@
+<div class="container-fluid">
+	<div class="row-fluid" ng-repeat="wish in wishes">
+		<div class="hero-unit">
+				
+			<h1>
+				<span class="badge">{{wish.wishType}}</span>{{wish.username}}
+			</h1>
+			<p>
+				{{wish.school_area}}
+			</p>
+			<p>
+				{{wish.wish}}
+			</p>
+			
+			<p>
+				<a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a>
+			</p>
+		</div>
+	</div>
+</div>

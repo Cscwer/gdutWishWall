@@ -1,0 +1,23 @@
+html {
+	font-size: 67.5%;
+	font-family: "微软雅黑";
+}
+.msg-container div p {
+	display: inline-block;
+	background-color: gray;
+	border-radius: 5px;
+	font-size: 1.6rem;
+	padding: 0 5px;
+}
+.this {
+	text-align: right;
+}
+
+.badge:empty {
+	display: inline-block;
+}
+.wishwall_badge {
+	background-color: red;
+	padding: 3px 3px;
+	min-width: 0;
+}

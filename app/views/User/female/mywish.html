@@ -1,0 +1,100 @@
+<div class="row-fluid">
+	<!-- <div class="panel panel-default">
+		 <div class="panel-heading">
+		      	 <h3 class="panel-title">
+		         有人申请领取的愿望
+		      	 </h3>
+		 </div>
+	   	 <div class="panel-body">
+	   	 	<p ng-show="ApplyToPickWishes.length === 0">暂时还没有人申请领取的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in ApplyToPickWishes">
+				<h1 ng-bind="wish.username">
+				</h1>
+				<p>
+					{{wish.wish}}
+				</p>
+				<p>
+					{{wish.wishpickername}}
+				</p>
+				<p>
+					<a class="btn btn-primary btn-large" ng-click="allowPick(wish)">允许</a>
+					<a class="btn btn-primary btn-large" ng-click="refusePick(wish)">拒绝</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.info({userId: wish.wishpicker})">查看资料</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker,username: wish.wishpickername})">联系他</a>
+				</p>
+			</div>
+	   	 </div>
+	</div> -->
+
+	<div class="panel panel-default">
+		 <div class="panel-heading">
+		        <h3 class="panel-title">
+		         	未被领取的愿望
+		        </h3>
+		 </div>
+		 <div class="panel-body">
+		 	<p ng-show="UnpickWishes.length === 0">暂时还没有未被领取的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in UnpickWishes">
+				<h1>
+					{{wish.username}}
+				</h1>
+				<p>
+					{{wish.wish}}
+				</p>
+				<p>
+					<a class="btn btn-primary btn-large" ui-sref="wish.changewish({wishId: wish._id})">修改愿望</a>
+					<a class="btn btn-primary btn-large" ng-click="deleteWish(wish)">删除愿望</a>
+				</p>
+			</div>
+		 </div>
+	</div>
+	
+	<div class="panel panel-default">
+		 <div class="panel-heading">
+		      	 <h3 class="panel-title">
+		         正在进行中的愿望
+		      	 </h3>
+		 </div>
+	   	 <div class="panel-body">
+	   	 	<p ng-show="PickedWishes.length === 0">暂时还没有正在进行中的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in PickedWishes">
+				<h1 ng-bind="wish.username">
+				</h1>
+				<p>
+					{{wish.wish}}
+				</p>
+				<p>
+					{{wish.wishpickername}}
+				</p>
+				<p>
+					<a class="btn btn-primary btn-large" ng-click="completeWish(wish)">确认完成</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.info({userId: wish.wishpicker})">查看资料</a>
+					<a class="btn btn-primary btn-large" ui-sref="user.contact({userId: wish.wishpicker, username: wish.wishpickername})">联系他</a>
+				</p>
+			</div>
+	   	 </div>
+	</div>
+	
+	<div class="panel panel-default">
+		 <div class="panel-heading">
+		        <h3 class="panel-title">
+		         	已完成的愿望
+		        </h3>
+		 </div>
+		 <div class="panel-body">
+		 	<p ng-show="CompletedWishes.length === 0">暂时还没有已完成的愿望</p>
+	      		<div class="hero-unit" ng-repeat="wish in CompletedWishes">
+				<h1>
+					{{wish.username}}
+				</h1>
+				<p>
+					{{wish.wish}}
+				</p>
+				<p>
+					<!-- <a class="btn btn-primary btn-large" ui-sref="wish.detail({wishId: wish._id})">愿望详情</a> -->
+					<a class="btn btn-primary btn-large" ui-sref="user.info({userId: wish.wishpicker})">查看资料</a>
+				</p>
+			</div>
+		 </div>
+	</div>
+</div>
