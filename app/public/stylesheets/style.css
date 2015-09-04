@@ -1,9 +1,0 @@
-body {
-  padding: 0;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-.msg-send-container {
-	position: fixed;
-	bottom: 0;
-}
