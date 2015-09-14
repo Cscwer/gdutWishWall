@@ -1,34 +1,7 @@
 /****************定义各种服务*****************/
 var Host = 'localhost:18080'; //定义主机
 
-//定义登录服务
-app.factory('LoginService', ['$http',
-    function($http) {
-        return {
-            doLogin: function(data) {
-                return $http({
-                    method: 'POST',
-                    url: '/login',
-                    data: data
-                });
-            }
-        };
-    }
-]);
 
-//注销登录服务
-app.factory('LogoutService', ['$http',
-    function($http) {
-        return {
-            doLogout: function() {
-                return $http({
-                    method: 'POST',
-                    url: '/logout'
-                });
-            }
-        };
-    }
-]);
 
 //获取指定用户的信息
 app.factory('GetUserInfoService', ['$http',
@@ -63,10 +36,10 @@ app.factory('UpdateInfoService', ['$http',
 app.factory('GetUnpickedWish', ['$http',
     function($http) {
         return {
-            getWishes: function() {
+            getWishes: function(page, per_page) {
                 return $http({
                     method: 'GET',
-                    url: '/getUnpickedWish'
+                    url: '/getUnpickedWish?page=' + page + '&per_page=' + per_page
                 });
             }
         };
@@ -221,10 +194,24 @@ app.factory('ContactService', ['$http',
 app.factory('WeChatService', ['$http',
     function($http) {
         return {
-            getAccessToken: function(code) {
+            getWeChatInfo: function(code) {
                 return $http({
                     method: 'GET',
-                    url: '/getAccessToken?code='+code
+                    url: '/getWeChatInfo?code='+code
+                });
+            },
+
+            getAccessToken: function(data) {
+                return $http({
+                    method: 'GET',
+                    url: '/getAccessToken?uid='+data.userId
+                });
+            },
+
+            getApiTicket: function(token) {
+                return $http({
+                    method: 'GET',
+                    url: '/getApiTicket?token='+token
                 });
             }
         };

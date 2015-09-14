@@ -1,4 +1,4 @@
-var app = angular.module('gdutWishWall', ['ui.router']);
+var app = angular.module('gdutWishWall', ['ui.router','infinite-scroll']);
 
 //配置路由规则
 app.config(function($stateProvider, $urlRouterProvider) {

@@ -5,9 +5,23 @@
 	 		<option value="耗时类">耗时类</option>
 	 		<option value="实物类">实物类</option>
 	 	</select><p style="display: inline; color:red" ng-show="putWishForm.wish_type.$invalid">请选择愿望类型!</p><br>
+	 	<button ng-click="chooseImage()">选择图片</button><br>
+	 	<ul>
+	 	<li ng-repeat="img in imgSrc">
+	 	<img ng-src="{{img}}" alt="">
+	 	</li>
+	 	</ul><br>
+
 	    	<label for="name">愿望内容</label>
 	    	<textarea class="form-control" rows="3" placeholder="写下你的愿望" ng-model="wish" name="wish" ng-maxlength="140" required></textarea>
 	    	<p style="color: red" ng-show="putWishForm.wish.$invalid">愿望不能为空且不能超过140个字</p>
 	 </div>
 	 <button type="submit" class="btn btn-default" ng-click="setUserInfo()" ng-disabled="putWishForm.$invalid">下一步</button>
 </form>
+<script>
+	// wx.config({
+	// 	debug: true,
+	// 	appId: 'wxc0328e0fe1f4cc8b',
+	// 	timestamp
+	// });
+</script>

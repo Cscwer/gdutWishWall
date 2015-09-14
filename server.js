@@ -5,6 +5,7 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var crypto = require('crypto');
 // var flash = require('express-flash');
 // var bcrypt = require('bcrypt');
 
@@ -29,6 +30,7 @@ app.set('port', 18080);
 var User = require('./models/user.js');
 var Wish = require('./models/wish.js');
 var Msg = require('./models/message.js');
+var Token = require('./models/token.js');
 
 app.use(favicon());
 app.use(logger('dev'));
@@ -59,9 +61,7 @@ app.get('/', function(req, res) {
 
 app.get('/index', function(req, res) {
 
-    res.sendfile('./app/views/index.html', {
-        code: req.query.code
-    });
+    res.sendfile('./app/views/index.html');
 });
 
 
@@ -70,12 +70,17 @@ app.get('/index', function(req, res) {
 
 //获取指定用户信息
 app.get('/getUserInfo', function(req, res) {
+    req.query.userId = req.query.userId || null;
     User.findOne({
         _id: req.query.userId
     }).exec(function(err, user) {
-        res.send({
-            user: user
-        });
+        if (!err) {
+            res.send({
+                user: user
+            });
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -83,13 +88,21 @@ app.get('/getUserInfo', function(req, res) {
 app.get('/getUnpickedWish', function(req, res) {
     Wish.find({
         "ispicked": 0
-    }).sort({
-        "_id": -1
-    }).exec(function(err, wishes) {
-        res.send({
-            wishes: wishes
+    })
+        .sort({
+            "_id": -1
+        })
+        .skip((req.query.page - 1) * req.query.per_page)
+        .limit(req.query.per_page)
+        .exec(function(err, wishes) {
+            if (!err) {
+                res.send({
+                    wishes: wishes
+                });
+            } else {
+                console.log(err);
+            }
         });
-    });
 });
 
 //处理许愿请求
@@ -102,7 +115,11 @@ app.post('/putwish', function(req, res) {
         school_area: req.body.school_area
     });
     newWish.save(function(err) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -119,18 +136,27 @@ app.post('/updateinfo', function(req, res) {
             short_tel: req.body.short_tel
         }
     }, function(err, num) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
 //获取指定愿望
 app.get('/getwish', function(req, res) {
+    req.query.wishId = req.query.wishId || null;
     Wish.findOne({
         "_id": req.query.wishId
     }).exec(function(err, wish) {
-        res.send({
-            wish: wish
-        });
+        if (!err) {
+            res.send({
+                wish: wish
+            });
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -145,18 +171,27 @@ app.post('/pickwish', function(req, res) {
             wishpickername: req.body.wishPickerName
         }
     }, function(err, docs) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
 //女生获取自己的愿望
 app.get('/getfemalewish', function(req, res) {
+    req.query.userId = req.query.userId || null;
     Wish.find({
         user: req.query.userId
     }).exec(function(err, wishes) {
-        res.send({
-            wishes: wishes
-        });
+        if (!err) {
+            res.send({
+                wishes: wishes
+            });
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -171,7 +206,11 @@ app.post('/updatewishstate', function(req, res) {
             wishpickername: req.body.wishPickerName
         }
     }, function(err, docs) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -185,7 +224,11 @@ app.post('/refreshwish', function(req, res) {
             wish: req.body.wish
         }
     }, function(err, docs) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -194,37 +237,52 @@ app.post('/deletewish', function(req, res) {
     Wish.remove({
         _id: req.body.wishId
     }, function(err, docs) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
 
 //男生获取自己的愿望
 app.get('/getmalewish', function(req, res) {
+    req.query.pickerId = req.query.pickerId || null;
     Wish.find({
         wishpicker: req.query.pickerId
     }).exec(function(err, wishes) {
-        res.send({
-            wishes: wishes
-        });
+        if (!err) {
+            res.send({
+                wishes: wishes
+            });
+        } else {
+            console.log(err);
+        }
     });
 });
 
 //用户获取消息记录
 app.get('/getmessage', function(req, res) {
+    req.query.userId = req.query.userId || null;
     Msg.find({
         receiver: req.query.userId
     }).sort({
         _id: -1
     }).exec(function(err, msg) {
-        res.send({
-            msgs: msg
-        });
+        if (!err) {
+            res.send({
+                msgs: msg
+            });
+        } else {
+            console.log(err);
+        }
     });
 });
 
 //阅读消息处理
 app.get('/readmessage', function(req, res) {
+    req.query.userId = req.query.userId || null;
     Msg.update({
         receiver: req.query.userId
     }, {
@@ -234,7 +292,11 @@ app.get('/readmessage', function(req, res) {
     }, {
         multi: true
     }, function(err, docs) {
-        res.end();
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
     });
 });
 
@@ -246,47 +308,260 @@ app.post('/getcontact', function(req, res) {
         .where('receiver').in([req.body.this, req.body.that])
         .where('sender').in([req.body.this, req.body.that])
         .exec(function(err, contacts) {
-            res.send({
-                contacts: contacts
-            });
+            if (!err) {
+                res.send({
+                    contacts: contacts
+                });
+            } else {
+                console.log(err);
+            }
         });
 });
 
-app.get('/getAccessToken', function(req, res) {
-    nodegrass.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxc0328e0fe1f4cc8b&secret='+config.AppSecret+'&code=' + req.query.code + '&grant_type=authorization_code', function(data, status, headers) {
-        var access_token = JSON.parse(data);
-        nodegrass.get('https://api.weixin.qq.com/sns/userinfo?access_token=' + access_token.access_token + '&openid=' + access_token.openid + '&lang=zh_CN', function(data, status, headers) {
-            var user_data = JSON.parse(data);
-            User.findOne({
-                openid: user_data.openid
-            }).exec(function(err, user) {
-                if(user) {
-                    res.send({data: user});
-                } else {
-                    var newUser = new User({
-                        openid: user_data.openid,
-                        nickname: user_data.nickname,
-                        sex: user_data.sex,
-                        province: user_data.province,
-                        city: user_data.city,
-                        country: user_data.country,
-                        headimgurl: user_data.headimgurl,
-                    });
-                    newUser.save(function(err) {
-                        // res.send({data: user_data});
+app.get('/getWeChatInfo', function(req, res) {
+    req.query.code = req.query.code || null;
+    if (req.query.code) {
+        nodegrass.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + config.AppId + '&secret=' + config.AppSecret + '&code=' + req.query.code + '&grant_type=authorization_code', function(data, status, headers) {
+            if (status === 200) {
+                var access_token = JSON.parse(data);
+                if (!access_token.errcode) {
+                    nodegrass.get('https://api.weixin.qq.com/sns/userinfo?access_token=' + access_token.access_token + '&openid=' + access_token.openid + '&lang=zh_CN', function(data, status, headers) {
+                        var user_data = JSON.parse(data);
+                        user_data.openid = user_data.openid || null;
                         User.findOne({
                             openid: user_data.openid
                         }).exec(function(err, user) {
-                            res.send({data: user});
+                            if (!err) {
+                                if (user) {
+                                    res.send({
+                                        data: user
+                                    });
+                                } else {
+                                    var newUser = new User({
+                                        openid: user_data.openid,
+                                        nickname: user_data.nickname,
+                                        sex: user_data.sex,
+                                        province: user_data.province,
+                                        city: user_data.city,
+                                        country: user_data.country,
+                                        headimgurl: user_data.headimgurl,
+                                    });
+                                    newUser.save(function(err) {
+                                        if (!err) {
+                                            User.findOne({
+                                                openid: user_data.openid
+                                            }).exec(function(err, user) {
+                                                if (!err) {
+                                                    res.send({
+                                                        data: user
+                                                    });
+                                                } else {
+                                                    console.log(err);
+                                                }
+                                            });
+                                        } else {
+                                            console.log(err);
+                                        }
+                                    });
+                                }
+                            } else {
+                                console.log(err);
+                            }
                         });
                     });
+                } else {
+                    res.send({
+                        errmsg: 'token 错误'
+                    });
                 }
-            });
-            // res.send({
-            //     data: user_data
-            // });
+            }
         });
+    } else {
+        res.send({
+            errmsg: 'code 错误'
+        });
+    }
+});
+
+app.get('/getAccessToken', function(req, res) {
+    req.query.uid = req.query.uid || null;
+    User.findOne({
+        _id: req.query.uid
+    }, function(err, user) {
+        if (!err) {
+            if (user) {
+                Token.findOne({})
+                    .exec(function(err, token) {
+                        if (!err) {
+                            if (token !== undefined && token !== null) {
+                                var date = token.timestamp_token;
+                                var timestamp_token = Date.parse(date);
+                                var timestamp_now = Date.parse(new Date());
+                                var time_skip = timestamp_now - timestamp_token;
+                                if (time_skip < 7200000) {
+                                    res.send({
+                                        token: token,
+                                        time_skip: time_skip
+                                    });
+                                } else {
+                                    nodegrass.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + config.AppId + '&secret=' + config.AppSecret, function(data, status, headers) {
+                                        if (status === 200) {
+                                            var access_token = JSON.parse(data);
+                                            if (!access_token.errcode) {
+                                                Token.update({}, {
+                                                        $set: {
+                                                            token: access_token.access_token,
+                                                            timestamp_token: timestamp_now
+                                                        }
+                                                    },
+                                                    function(err, docs) {
+                                                        if (!err) {
+                                                            Token.findOne({})
+                                                                .exec(function(err, token) {
+                                                                    if (!err) {
+                                                                        res.send({
+                                                                            token: token
+                                                                        });
+                                                                    } else {
+                                                                        console.log(err);
+                                                                    }
+                                                                })
+                                                        } else {
+                                                            console.log(err);
+                                                        }
+                                                    });
+                                            } else {
+                                                res.send({
+                                                    errmsg: access_token.errmsg
+                                                });
+                                            }
+                                        }
+                                    });
+
+                                }
+
+                            } else {
+                                nodegrass.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + config.AppId + '&secret=' + config.AppSecret, function(data, status, headers) {
+                                    if (status === 200) {
+                                        var access_token = JSON.parse(data);
+                                        if (!access_token.errcode) {
+                                            var newToken = new Token({
+                                                token: access_token.access_token
+                                            });
+                                            newToken.save(function(err) {
+                                                if (!err) {
+                                                    Token.findOne({})
+                                                        .exec(function(err, token) {
+                                                            if (!err) {
+                                                                res.send({
+                                                                    token: token,
+
+                                                                });
+                                                            } else {
+                                                                console.log(err);
+                                                            }
+                                                        });
+                                                } else {
+                                                    console.log(err);
+                                                }
+                                            });
+
+                                        } else {
+                                            res.send({
+                                                errmsg: access_token.errmsg
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        } else {
+                            console.log(err);
+                        }
+                    });
+            } else {
+                res.send({
+                    errmsg: '请登录后再试'
+                });
+            }
+        } else {
+            console.log(err);
+        }
     });
+
+});
+
+//生成 Signature 的函数
+var createSignature = function(token) {
+    var timestamp = Date.parse(token.timestamp_ticket);
+    var string = 'jsapi_ticket=' + token.ticket + '&noncestr=' + config.noncestr + '&timestamp=' + timestamp + '&url=' + config.ticket_url;
+    var md5sum = crypto.createHash('sha1');
+    md5sum.update(string, 'utf8');
+    string = md5sum.digest('hex');
+    return string;
+
+};
+
+app.get('/getApiTicket', function(req, res) {
+    req.query.token = req.query.token || null;
+    Token.findOne({
+        token: req.query.token
+    }).exec(function(err, token) {
+        if (!err) {
+            if (token) {
+                var date = token.timestamp_ticket;
+                var timestamp_ticket = Date.parse(date);
+                var timestamp_now = Date.parse(new Date());
+                var time_skip = timestamp_now - timestamp_ticket;
+                if (time_skip < 7200000) {
+                    var signature = createSignature(token);
+                    res.send({
+                        signature: signature,
+                        timestamp_ticket: Date.parse(token.timestamp_ticket),
+                        noncestr: config.noncestr,
+                        appId: config.AppId
+                    });
+                } else {
+                    nodegrass.get('https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=' + token.token + '&type=jsapi', function(data, status, headers) {
+                        if (status === 200) {
+                            var ticket_data = JSON.parse(data);
+                            if (ticket_data.errcode === 0) {
+                                Token.update({}, {
+                                        $set: {
+                                            ticket: ticket_data.ticket,
+                                            timestamp_ticket: timestamp_now
+                                        }
+                                    },
+                                    function(err, docs) {
+                                        if (!err) {
+                                            Token.findOne({})
+                                                .exec(function(err, token) {
+                                                    if (!err) {
+                                                        var signature = createSignature(token);
+                                                        res.send({
+                                                            signature: signature
+                                                        });
+                                                    } else {
+                                                        console.log(err);
+                                                    }
+                                                });
+                                        } else {
+                                            console.log(err);
+                                        }
+                                    });
+                            }
+                        }
+                    });
+                }
+            } else {
+                res.send({
+                    errmsg: '洗洗睡吧'
+                });
+            }
+        } else {
+            console.log(err);
+        }
+    });
+
 });
 
 //设置 socket 日志级别
@@ -310,8 +585,12 @@ io.on('connection', function(socket) {
             msg: msg.msg
         });
         newMsg.save(function(err) {
-            socket.emit('Msg_res', msg);
-            socket.broadcast.emit('Msg_res', msg);
+            if (!err) {
+                socket.emit('Msg_res', msg);
+                socket.broadcast.emit('Msg_res', msg);
+            } else {
+                console.log(err);
+            }
         });
 
     });

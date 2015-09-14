@@ -1,11 +1,38 @@
 //主页控制器
 app.controller('IndexCtrl', ['$scope', 'GetUnpickedWish',
     function($scope, GetUnpickedWish) {
+
+        //愿望列表
+        $scope.wishes = [];
+
         //获取在主页显示的愿望
-        GetUnpickedWish.getWishes()
-            .success(function(data) {
-                $scope.wishes = data.wishes;
-            });
+        // GetUnpickedWish.getWishes()
+        //     .success(function(data) {
+        //         $scope.wishes = data.wishes;
+        //     });
+
+        //加载下一页的内容，只有登录的人才能查看
+        $scope.page = 1; //当前页数
+        $scope.per_page = 5; //每页显示数目
+        $scope.isLoading = false;
+        $scope.nextpage = function(page, per_page) {
+            $scope.isLoading = true;
+            GetUnpickedWish.getWishes(page, per_page)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        // alert(data.wishes.length);
+                        for (var i = 0; i < data.wishes.length; i++) {
+                            $scope.wishes.push(data.wishes[i]);
+                        }
+                        $scope.page++;
+                        $scope.isLoading = false;
+                    }
+                });
+        };
+
+        $scope.nextpage(1, 5);
+
+
     }
 ]);
 
@@ -14,17 +41,32 @@ app.controller('HeaderCtrl', ['$scope', '$rootScope', '$state', '$location', '$h
 
     function($scope, $rootScope, $state, $location, $http, MsgService, WeChatService) {
 
+
         //获取微信用户信息
         var code = $location.search().code;
-
-        WeChatService.getAccessToken(code)
+        WeChatService.getWeChatInfo(code)
             .success(function(data, status) {
                 if (status === 200) {
-                    $rootScope.user = data.data;
-                    sessionStorage.setItem('uid', $rootScope.user._id);
-                    sessionStorage.setItem('username', $rootScope.user.nickname);
+                    if (!data.errmsg) {
+                        $rootScope.user = data.data;
+                        sessionStorage.setItem('uid', $rootScope.user._id);
+                        sessionStorage.setItem('username', $rootScope.user.nickname);
+                    } else {
+                        $rootScope.user = null;
+                        // alert("登录出错");
+                    }
                 }
             });
+
+        //登录保护
+        $rootScope.$on('$stateChangeStart', function(event, toState) {
+
+            if ($rootScope.user === null) {
+                event.preventDefault();
+                $state.go('index');
+            }
+
+        });
 
         //系统消息队列
         $rootScope.SystemMsg = [];
@@ -94,7 +136,7 @@ app.controller('UserInfoCtrl', ['$scope', '$rootScope', '$state', '$stateParams'
         GetUserInfoService.getUserInfo(data)
             .success(function(data, status) {
                 if (status === 200) {
-                    $rootScope.user = data.user;
+                    $scope.user = data.user;
                 }
             });
     }
@@ -102,14 +144,15 @@ app.controller('UserInfoCtrl', ['$scope', '$rootScope', '$state', '$stateParams'
 
 
 //用户控制器
-app.controller('UserCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'PutWishService', 'WishData', 'GetUserInfoService', 'UpdateInfoService', 'UpdateWishService',
-    function($scope, $rootScope, $state, $stateParams, PutWishService, WishData, GetUserInfoService, UpdateInfoService, UpdateWishService) {
+app.controller('UserCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'PutWishService', 'WishData', 'GetUserInfoService', 'UpdateInfoService', 'UpdateWishService', 'WeChatService',
+    function($scope, $rootScope, $state, $stateParams, PutWishService, WishData, GetUserInfoService, UpdateInfoService, UpdateWishService, WeChatService) {
 
         $scope.isRewrite = $stateParams.rewrite;
 
         var data = {
             userId: sessionStorage.getItem('uid')
         };
+
         GetUserInfoService.getUserInfo(data)
             .success(function(data, status) {
                 if (status === 200) {
@@ -120,6 +163,53 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'P
                     $scope.short_tel = data.user.short_tel;
                 }
             });
+
+
+        // JS_Api 初始化函数
+        $scope.apiConfig = function(signature) {
+            wx.config({
+                debug: true,
+                appId: signature.appId,
+                timestamp: signature.timestamp_ticket,
+                nonceStr: signature.noncestr,
+                signature: signature.signature,
+                jsApiList: ['chooseImage']
+            });
+            wx.error(function(res) {
+                // alert(res);
+            });
+        };
+
+        //获取微信 AccessToken 以及 ApiTicket (女生才需要)
+            WeChatService.getAccessToken(data)
+                .success(function(data, status) {
+                    if (status === 200) {
+                        var token = data.token.token;
+                        WeChatService.getApiTicket(token)
+                            .success(function(data, status) {
+                                if (status === 200) {
+                                    //获取 Signature
+                                    $scope.signature = data;
+                                    $scope.apiConfig($scope.signature);
+                                }
+                            });
+                    }
+                });
+
+        $scope.imgSrc = [];
+        $scope.chooseImage = function() {
+            wx.chooseImage({
+                count: 9,
+                sizeType: ['original', 'compressed'],
+                sourceType: ['album', 'camera'],
+                success: function(res) {
+                    $scope.imgSrc = res.localIds;
+                    alert($scope.imgSrc.length);
+                }
+            });
+        };
+
+
 
         $scope.setUserInfo = function() {
 
@@ -226,14 +316,16 @@ app.controller('UserCtrl', ['$scope', '$rootScope', '$state', '$stateParams', 'P
                 .success(function(data, status) {
                     if (status === 200) {
                         alert('修改成功');
-                        $state.go('user.info',{userId: InfoData.user});
+                        $state.go('user.info', {
+                            userId: InfoData.user
+                        });
                     }
                 });
 
 
         };
 
-        
+
 
     }
 ]);
