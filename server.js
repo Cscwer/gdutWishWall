@@ -31,6 +31,9 @@ var User = require('./models/user.js');
 var Wish = require('./models/wish.js');
 var Msg = require('./models/message.js');
 var Token = require('./models/token.js');
+var Bless = require('./models/bless.js');
+var Praise = require('./models/praise.js');
+
 
 app.use(favicon());
 app.use(logger('dev'));
@@ -316,6 +319,57 @@ app.post('/getcontact', function(req, res) {
                 console.log(err);
             }
         });
+});
+
+//处理祝福
+app.post('/putbless', function(req, res) {
+    var newBless = new Bless({
+        user: req.body.user,
+        username: req.body.username,
+        bless: req.body.bless,
+        school_area: req.body.school_area
+    });
+    newBless.save(function(err) {
+        if (!err) {
+            res.end();
+        } else {
+            console.log(err);
+        }
+    });
+});
+
+//获取所有祝福
+app.get('/getAllBless', function(req, res) {
+    Bless.find().exec(function(err, blesses) {
+        if(!err) {
+            res.send({
+                blesses: blesses
+            });
+        } else {
+            console.log(err);
+        }
+    });
+});
+
+//获取指定用户的祝福
+
+
+//处理点赞行为
+app.post('/makePraise', function(req, res) {
+    req.body.blessId = req.body.blessId || null;
+    Bless.findOne({
+        _id: req.body.blessId
+    }).exec(function(err, bless) {
+        if(!err) {
+            bless.praiser.push(req.body.userId);
+            bless.praiser_num++;
+            Bless.update({
+                _id: blessId
+            },bless);
+        } else {
+            console.log(err);
+        }
+    });
 });
 
 app.get('/getWeChatInfo', function(req, res) {
