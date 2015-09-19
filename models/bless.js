@@ -10,7 +10,7 @@ var BlessSchema = new Schema({
     praise_num: {
         type: Number,
         default: 0
-    }
+    },
     publishDate: {
         type: Date,
         default: Date.now
