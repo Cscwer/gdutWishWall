@@ -32,7 +32,6 @@ var Wish = require('./models/wish.js');
 var Msg = require('./models/message.js');
 var Token = require('./models/token.js');
 var Bless = require('./models/bless.js');
-var Praise = require('./models/praise.js');
 
 
 app.use(favicon());
