@@ -339,7 +339,7 @@ app.post('/putbless', function(req, res) {
 
 //获取所有祝福
 app.get('/getAllBless', function(req, res) {
-    Bless.find().exec(function(err, blesses) {
+    Bless.find({}).exec(function(err, blesses) {
         if(!err) {
             res.send({
                 blesses: blesses
