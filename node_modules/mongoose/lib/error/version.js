@@ -12,11 +12,11 @@ var MongooseError = require('../error.js');
  * @api private
  */
 
-function VersionError () {
+function VersionError() {
   MongooseError.call(this, 'No matching document found.');
   Error.captureStackTrace && Error.captureStackTrace(this, arguments.callee);
   this.name = 'VersionError';
-};
+}
 
 /*!
  * Inherits from MongooseError.

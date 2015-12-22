@@ -1,31 +1,24 @@
-<div>
-	<button ng-click='clearMsg()'>清空消息记录</button><br>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-		      	 <h3 class="panel-title">
-		         系统消息
-		      	 </h3>
-		 </div>
-		 <div class="panel-body" ng-repeat="msg in SystemMsg">
-		      <p style="background-color: gray;">
-		      {{msg.msg_time | date: "yyyy-MM-dd  H:m"}}
-		      <!-- <span class="badge">新</span> -->
-		      {{msg.sender_name}}{{msg.msg}}
-		      </p>
-		 </div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-		      	 <h3 class="panel-title">
-		         用户消息
-		      	 </h3>
-		 </div>
-		 <div class="panel-body" ng-repeat="msg in UserMsg">
-		      <p style="background-color: gray;" ui-sref="user.contact({userId: msg.sender, username: msg.sender_name})">
-		      {{msg.msg_time | date: "yyyy-MM-dd  H:m"}}
-		      <!-- <span class="badge">新</span> -->
-		      {{msg.sender_name}}给你发来一条消息
-		      </p>
-		 </div>
-	</div>
+<div class="scrollable">
+    <div class="scrollable-content msg-content">
+        <div class="navbar navbar-app wishwall-navbar-app wishwall-navbar-top message-navbar-top">
+            <!-- Top Navbar -->
+            <div class="navbar-brand navbar-brand-center">消息</div>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12" ng-click="clearNotice('Notice')">
+            	<div class="greenbox"><span class="badge"ng-bind="notices_num" ng-if="notices_num !== 0"></span></div><p>通知</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" ng-click="clearNotice('Praise')">
+            	<div class="greenbox"><span class="badge"ng-bind="praise_num" ng-if="praise_num !== 0"></span></div><p>获赞</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" ng-click="clearNotice('User')">
+                <div class="greenbox"><span class="badge"ng-bind="user_num" ng-if="user_num !== 0"></span></div><p>私信</p>
+            </div>
+        </div>
+    </div>
 </div>

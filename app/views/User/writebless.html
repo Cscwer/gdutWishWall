@@ -1,0 +1,38 @@
+
+<div class="scrollable-content">
+    <div class="navbar navbar-app wishwall-navbar-app wishwall-navbar-top setting-navbar-top ">
+        <div class="navbar-brand navbar-brand-center">
+            发祝福
+            <a href="javascript:void(0)" class="btn btn-navbar wishwall-icon-a" ng-click="goBack()"> <i class="fa fa-angle-left fa-navbar wishwall-icon-cog"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wishwall-form-content">
+        <form role="form" name="putBlessForm">
+            <div class="form-group writewish-textarea">
+                <textarea class="form-control" rows="3" placeholder="写下你的祝福且不能超过140个字" ng-model="bless" name="bless" ng-maxlength="70" required></textarea>
+                <span class="wishwall-icon-camera" ng-click="chooseBlessImage()"> <i class="fa fa-camera" ng-hide="localBlessIds.length"></i>
+                    <img  ng-src="{{localBlessIds[0]}}" ng-show="localBlessIds.length"  width="80px" height="80px"></span>
+                <span class="wishwall-word-num" ng-bind="140-bless.length"></span>
+            </div>
+            <div class="wishwall-write-info school-area blesswall-write-info">
+                <div class="row row-noborder rewrite-container">
+                    <label class="blesswall-label">所在校区
+                    <select name="school_area" ng-model="user.school_area" required class="hide-select-school form-control input-lg rewrite-select">
+                        <option value="大学城">大学城</option>
+                        <option value="龙洞">龙洞</option>
+                        <option value="东风路">东风路</option>
+                        <option value="番禺">番禺</option>
+                    </select>
+                    </label>
+                    <div class="area-selection">
+                        <span ng-if="!user.school_area">请选择校区</span>
+                        <span ng-bind="user.school_area"></span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-warning" ng-click="publicBless()" ng-disabled="putBlessForm.$invalid || isClick">发布</button>
+        </form>
+    </div>
+
+</div>

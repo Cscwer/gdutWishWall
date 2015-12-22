@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html ng-app="example">
+<head>
+    <title>Example</title>
+
+    <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="../ng-infinite-scroll.js"></script>
+</head>
+<body ng-controller="MainController">
+
+
+    <div ng-infinite-scroll options="options" items="items" style="height: 200px; overflow: hidden; overflow-y: auto;">
+        <div data-ng-repeat="item in items">{{item}}</div>
+    </div>
+
+
+</body>
+</html>

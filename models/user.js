@@ -13,7 +13,9 @@ var UserSchema = new Schema({
     school_area: String,
     college_name: String,
     long_tel: String,
-    short_tel: String
+    short_tel: String,
+    email: String,
+    mystery_lover: String
 });
 
 

@@ -1,0 +1,18 @@
+    <div class="scrollable-content msg-content wishwall-notice">
+        <div class="navbar navbar-app wishwall-navbar-app wishwall-navbar-top setting-navbar-top ">
+            <!-- Top Navbar -->    
+            <div class="navbar-brand navbar-brand-center">
+                通知
+                <a href="javascript:void(0)" class="btn btn-navbar wishwall-icon-a" ng-click="goBack()"> <i class="fa fa-angle-left fa-navbar wishwall-icon-cog"></i>
+                </a>
+            </div>
+        </div>
+        <div class="wishwall-notice-container" ng-repeat = "msg in MsgList">
+            <div class="row">
+                <div class="col-xs-12" ui-sref="user.contact({userId: msg.sender,username: msg.sender_name})">
+                    <p>{{msg.msg}}</p>
+                    <span class="timestamp">{{msg.msg_time | date: "yyyy-MM-dd"}}</span>
+                </div>
+            </div>
+        </div>
+    </div>

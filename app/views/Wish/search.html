@@ -1,0 +1,100 @@
+<div wishwallsearch>
+    <div class="navbar navbar-app wishwall-search-navbar">
+        <div class="navbar-brand navbar-brand-left">
+            <div class="btn-group">
+                <a class='btn wishwall-dropdown-btn'>
+                    <span ng-model="searchwhere" ng-bind="searchwhere"></span> <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="dropdown-menu wishwall-dropdown-menu">
+                    <li>
+                        <a ng-click="searchSelect(1)">许愿墙</a>
+                    </li>
+                    <li>
+                        <a ng-click="searchSelect(2)">祝福墙</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <input type="text" class="form-control" placeholder="对方昵称 or 愿望关键字" ng-model="searchinput"> <i class="fa fa-remove"></i>
+        <span style="display:none" class="dosearch" ng-click="doSearch()">搜索</span>
+    </div>
+    <div class="wishwall-search-content">
+        <div class="row search-type">
+            <div class="col-xs-12">按女生校区</div>
+        </div>
+        <div class="row search-school-area">
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(1)" ng-class="{searchactive: search_area==='大学城'}">大学城校区</span>
+            </div>
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(2)" ng-class="{searchactive: search_area==='龙洞'}">龙洞校区</span>
+            </div>
+        </div>
+        <div class="row search-school-area">
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(3)" ng-class="{searchactive: search_area==='东风路'}">东风路校区</span>
+            </div>
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(4)" ng-class="{searchactive: search_area==='番禺'}">番禺校区</span>
+            </div>
+        </div>
+        <div class="row search-school-area">
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(5)" ng-class="{searchactive: search_area==='沙河'}">沙河校区</span>
+            </div>
+            <div class="col-xs-6">
+                <span ng-click="areaSelect(0)" ng-class="{searchactive: !search_area}">全校区</span>
+            </div>
+        </div>
+        <div class="row search-type">
+            <div class="col-xs-12" ng-if="searchwhere==='许愿墙'">按愿望类型</div>
+            <div class="col-xs-12" ng-if="searchwhere==='祝福墙'">按获赞数目</div>
+        </div>
+        <div class="row search-school-area">
+            <div class="col-xs-6">
+                <span ng-if="searchwhere==='许愿墙'" ng-click="typeSelect(1)" ng-class="{searchactive: search_wishtype==='实物类'}">实物类</span>
+                <span ng-if="searchwhere==='祝福墙'" ng-click="sortSelect(-1)" ng-class="{searchactive: search_sort===-1}">从高到低</span>
+            </div>
+            <div class="col-xs-6">
+                <span ng-if="searchwhere==='许愿墙'" ng-click="typeSelect(2)"
+                                        ng-class="{searchactive: search_wishtype==='耗时类'}">耗时类</span>
+                <span ng-if="searchwhere==='祝福墙'" ng-click="sortSelect(1)" ng-class="{searchactive: search_sort===1}">从低到高</span>
+            </div>
+        </div>
+        <div class="row search-school-area">
+            <div class="col-xs-6">
+                <span ng-if="searchwhere==='许愿墙'" ng-click="typeSelect(0)" ng-class="{searchactive: !search_wishtype}">全部类</span>
+                <span ng-if="searchwhere==='祝福墙'" ng-click="sortSelect(0)" ng-class="{searchactive: !search_sort}">任性不排</span>
+            </div>
+            <div class="col-xs-6"></div>
+        </div>
+        <button type="button" class="btn btn-default search-btn" ng-click="wishwallSearch()">筛选</button>
+    </div>
+    <div class="wishwall-search-result" style="display:none">
+        <div class="section wishwall-section">
+            <div class="row">
+                <div class="col-xs-12 wishwall-col-6">
+                    <div class="panel panel-default wishwall-panel" ng-repeat="wish in search_result_wishes">
+                        <div class="panel-body wishwall-panel-body">
+                            <div class="wishinfo-panel">
+                                <img ng-src="{{wish.userheadimg}}" alt="" class="headimg">
+
+                                <div class="username">
+                                    <span>{{wish.username}}</span>
+                                    <br>
+                                    <span class="school_area">{{wish.school_area}}</span>
+                                </div>
+                                <span class="pick_this" ng-click="pickWish(wish)">icon</span>
+
+                                <hr class="wishborder">
+                                <p class="wish_content">{{wish.wish}}</p>
+                            </div>
+
+                            <img ng-if="wish.img" ng-src="{{wish.img}}" alt="" class="wish-content-img" ng-click="previewImage(wish.img)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

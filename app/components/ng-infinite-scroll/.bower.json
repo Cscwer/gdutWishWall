@@ -1,0 +1,36 @@
+{
+  "name": "ng-infinite-scroll",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ash-developer/ng-infinite-scroll",
+  "authors": [
+    "Andrei Shevel <ash.developer@yandex.ru>"
+  ],
+  "description": "Angular.js directive that implements infinite scroll functionality",
+  "main": "ng-infinite-scroll.js",
+  "keywords": [
+    "infinite",
+    "scroll",
+    "angular",
+    "directive"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.26"
+  },
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.1",
+    "commit": "2e86fc19368b8882cd573a696161af2268b89681"
+  },
+  "_source": "git://github.com/ash-developer/ng-infinite-scroll.git",
+  "_target": "~0.0.1",
+  "_originalSource": "ng-infinite-scroll"
+}
