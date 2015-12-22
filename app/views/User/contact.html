@@ -1,0 +1,8 @@
+<div class="contact-content" wishwallcontact><div class="navbar navbar-app wishwall-navbar-app wishwall-navbar-top setting-navbar-top"><div class="navbar-brand navbar-brand-center">{{thatUserName}} <a href="javascript:void(0)" class="btn btn-navbar wishwall-icon-a" ng-click="goBack()"><img src="http://7xnxuw.com1.z0.glb.clouddn.com/3_return.png" alt=""></a></div></div><div class="msg-container" style="padding-bottom: 50px"><!-- <div ng-repeat="msg in contacts track by $index" ng-if="msg.sender === thatUser || msg.receiver === thatUser" ng-class="msg.sender === thatUser ? 'that' : (msg.receiver === thatUser ? 'this' : '')">
+         {{msg.msg_time | date: "yyyy-MM-dd  HH:mm"}}
+         <br>
+         <p>{{msg.msg}}</p>
+      </div> --><div ng-repeat="msg in contacts" ng-if="msg.sender === thatUser || msg.receiver === thatUser" ng-class="msg.sender === thatUser ? 'that' : (msg.receiver === thatUser ? 'this' : '')" class="usermsg"><img ng-src="{{msg.sender_headimg}}" alt=""><p>{{msg.msg}}</p></div><!-- <div class="this usermsg">
+         <img src="http://7xnxuw.com1.z0.glb.clouddn.com/user-oW7b_stiFPzUfvIKGbSMN71tGJ6o" alt="">
+         <p>测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试</p>
+      </div> --></div><div class="contact-input"><form class="bs-example bs-example-form" role="form"><div class="row"><div class="col-xs-12"><div class="input-group"><input type="text" class="form-control" ng-model="contact_msg" ng-class="{'chating-active-border': contact_msg}"> <span class="input-group-btn"><a class="btn btn-default" type="button" ng-click="sendMsg()" ng-disabled="!isConnected" ng-class="{'chating-active-text': contact_msg}">发送</a></span></div><!-- /input-group --></div><!-- /.col-lg-6 --></div><!-- /.row --></form></div></div>
