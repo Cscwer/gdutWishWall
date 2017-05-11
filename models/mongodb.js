@@ -17,7 +17,7 @@ var options = {
 
 var host = isDev ? '127.0.0.1' : 'mongo.duapp.com';
 var port = isDev ? '27017' : '8908';
-var database = isDev ? 'wishwall_dev' : 'AygDVLRcJWRDSHyBCUvv';
+var database = isDev ? 'wishwall_dev' : 'JlAIFbhDCUFWpZofGotp';
 var user = isDev ? '' : '87b918b63554437c8da82874f7fd958b';
 var pass = isDev ? '' : 'd15e4fcb62ba45dba9395418ee12a472';
 db.open(host, database, port, options);
